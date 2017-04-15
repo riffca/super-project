@@ -1,0 +1,5 @@
+#! /bin/sh
+cd /my_folder
+rm *.jar
+svn co path to repo
+mvn compile package install

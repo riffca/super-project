@@ -22,8 +22,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4000")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4000")
+		// w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Write([]byte("{\"hello\": \"world\"}"))
 	})
 
@@ -32,7 +32,7 @@ func main() {
 	// documentation below for more options.
 
 	handlerCors := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4000"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	}).Handler(mux)
 
