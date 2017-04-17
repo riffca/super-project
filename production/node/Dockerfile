@@ -1,4 +1,5 @@
 FROM mhart/alpine-node
 COPY index.js .
 EXPOSE 3000
+CMD npm install express
 CMD node index.js
