@@ -10,7 +10,7 @@
     </transition>
 
     <div ref="slider" class="slider-mini-pair" @click="change">
-      <img :style="{margin: sliderMargin + 'px' }" src="../portf-kate/pan.jpg">
+      <img :style="{margin: sliderMargin + 'px' }" src="../portf-kate/Pan.jpg">
     </div>
 
     <div ref="slider" class="slider-mini-pair" @click="change">
