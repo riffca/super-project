@@ -3,6 +3,11 @@
 To start:
 
 ```bash
+$ docker build -t riffca/project .
+$ docker run -d -p 4000:4000 riffca/project
+```
+
+```bash
 $ npm install
 ```
 
