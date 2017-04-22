@@ -21,8 +21,10 @@
     </div>
   </div>
   <div class="body-images">
+    <div class="screen-text">
+      Виртуозно нарисуем сайт и быстро соберем проект
+    </div>
     <div class="top-screen" @click="scroll" :style="{height: windowHeight + 'px'}">
-
       <transition name="fade">
         <img src="../portf-kate/Fruitbox1.jpg" v-if="mainImg" key="mainImg">
         <img src="../portf-kate/Fruitbox2.jpg" v-if="!mainImg" key="!mainImg">
@@ -226,7 +228,17 @@ img.beer-house {
 .top-screen {
   overflow: hidden;
   position: relative;
-  background: pink;
+  /*background: pink;*/
+}
+.screen-text {
+  position: absolute;
+  text-align: center;
+  display: relative;
+  width: 100%;
+  z-index: 100;
+  padding-top: 20%;
+  font-size: 32px;
+  color: white;
 }
 
 
