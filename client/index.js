@@ -1,5 +1,8 @@
 import './promise-polyfill'
 import { app } from './app'
+//import SockJS from'sockjs';
+
+
 
 // Enable progressive web app support (with offline-plugin)
 if (process.env.NODE_ENV === 'production') {

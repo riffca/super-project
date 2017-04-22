@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.18.0",
+    "jquery": "^3.2.1",
     "promise-polyfill": "^6.0.2",
     "sockjs": "^0.3.18",
     "vue": "^2.2.0",
