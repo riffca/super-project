@@ -35,7 +35,7 @@ class Channel {
 
   req( action_str, data_type, request_map = {}, trans_map = {} ) {
     const { model } = Private.get( this );
-    if ( store.state.user.isAuth ) {
+    if ( false/*store.state.user.isAuth*/ ) {
       trans_map.token = store.state.user.token;
     }
     return new Promise( ( resolve, reject ) => {

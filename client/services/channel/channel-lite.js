@@ -43,7 +43,6 @@ var options = {
 
 
 
-
 class Store {
 
   constructor(){
@@ -108,13 +107,18 @@ class Store {
 }
 
 
+const Private = new WeakMap();
 class Model {
   constructor(){
-    this.store = new Store();
-    this.store.connect();
+
+    let store = new Store();
+    store.connect();
+    Private.set(this, {store})
+
   }
   req(data){
-    this.store.request(data);
+    let { store } = Private.get(this);
+    store.request(data);
   }
 }
 

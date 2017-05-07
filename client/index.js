@@ -10,8 +10,8 @@ window.colorLog = (color='green', font=20)=>{
   return css;
 }
 
-//import channel from './services/channel/channel';
-import channel from './services/channel/channel-lite';
+import channel from './services/channel/channel';
+//import channel from './services/channel/channel-lite';
 
 channel.req( { name: 'stas' }, ()=> {
 

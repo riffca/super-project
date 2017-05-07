@@ -6,6 +6,7 @@ import (
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
+	"reflect"
 )
 
 var (
@@ -26,10 +27,26 @@ func main() {
 	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
+type DataSheme struct {
+	Data_Type     string `json:"data_type"`
+	Action_String string `json:"action_string"`
+	Log_List      map[string]string
+	Request_Map   map[string]string
+	Trans_Map     map[string]string
+}
+
+func (t *DataSheme) Foo() {
+	log.Println("ASSSSSSSSSSS")
+}
+
 func echoHandler(session sockjs.Session) {
+	var t DataSheme
 	log.Println("new sockjs session established")
 	for {
 		if msg, err := session.Recv(); err == nil {
+
+			reflect.ValueOf(&t).MethodByName("Foo").Call([]reflect.Value{})
+
 			session.Send(msg)
 			continue
 		}
