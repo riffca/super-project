@@ -53,7 +53,7 @@ class Store {
 
   request(data, func){
     data.map_id = Math.random() * 1000 ;
-    this.sock.send.call(this,JSON.stringify(data));
+    this.sock.send(JSON.stringify(data));
     this.maps.push({id: data.map_id, action: func})
     //////////////////////////////////////////////
     console.log("%c[SEND DATA]", colorLog('GREEN'))
@@ -64,18 +64,28 @@ class Store {
 
   connect(){
     let self = this;
+
     this.sock = new SockJS('http://localhost:9000'+'/echo/', undefined, options);
+
     this.sock.onopen = function() {
 
       console.log('%cconnection open',colorLog());
+
       self.request({action: 'Test'}, (data)=>{
         alert(data.map_id);
       })
 
     };
     this.sock.onmessage = function(e) {
+      let data;
+      try {
+        data = JSON.parse(e.data)
 
-      let data = JSON.parse(e.data)
+      } catch (e){
+        console.log('%cError: Sock data not a json', colorLog('orange'))
+        console.log(e)
+        data = {temp: e.data}
+      }
       //////////////////////////////////////////////
       console.log("%c[GET DATA]", colorLog('blue'))
       console.log(data);
@@ -99,8 +109,8 @@ class Store {
 
 
 class Model {
-  constructor(store){
-    this.store = store
+  constructor(){
+    this.store = new Store();
     this.store.connect();
   }
   req(data){
@@ -111,12 +121,7 @@ class Model {
 
 export default (function init() {
 
-  let store = new Store().connect();
-
-  //let sock = new Model(store);
-
-  return store;
-
+  return new Model();
 
 })();
 

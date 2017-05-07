@@ -30,7 +30,6 @@ func echoHandler(session sockjs.Session) {
 	log.Println("new sockjs session established")
 	for {
 		if msg, err := session.Recv(); err == nil {
-			log.Println("get")
 			session.Send(msg)
 			continue
 		}

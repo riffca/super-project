@@ -13,8 +13,8 @@ window.colorLog = (color='green', font=20)=>{
 //import channel from './services/channel/channel';
 import channel from './services/channel/channel-lite';
 
-// channel.req( { name: 'stas' }, ()=> {
+channel.req( { name: 'stas' }, ()=> {
 
-// });
+});
 
 app.$mount('#app')
