@@ -23,6 +23,7 @@
     "jquery": "^3.2.1",
     "promise-polyfill": "^6.0.2",
     "sockjs": "^0.3.18",
+    "sockjs-client": "^1.1.4",
     "vue": "^2.2.0",
     "vue-router": "^2.0.0",
     "vuex": "^2.0.0",

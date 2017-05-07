@@ -22,7 +22,7 @@
   </div>
   <div class="body-images">
     <div class="screen-text">
-      Виртуозно нарисуем сайт и быстро соберем проект
+      Виртуозно нарисуем сайт и быстро раскрутим проект
     </div>
     <div class="top-screen" @click="scroll" :style="{height: windowHeight + 'px'}">
       <transition name="fade">
