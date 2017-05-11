@@ -1,7 +1,5 @@
 import './promise-polyfill'
 
-import { app } from './app'
-
 window.colorLog = (color='green', font=20)=>{
   let css = `
     color: ${color};
@@ -10,11 +8,11 @@ window.colorLog = (color='green', font=20)=>{
   return css;
 }
 
-import channel from './services/channel/channel';
-//import channel from './services/channel/channel-lite';
+import channel from './services/channel/channel-lite';
 
-channel.req( { name: 'stas' }, ()=> {
+import { app } from './app'
 
-});
+
+//import channel from './services/channel/channel';
 
 app.$mount('#app')

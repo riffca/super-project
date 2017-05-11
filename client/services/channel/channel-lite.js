@@ -46,20 +46,41 @@ var options = {
 class Store {
 
   constructor(){
+    this.connected = false;
     this.sock = null;
     this.maps = []
   }
 
   request(data, func){
-    data.map_id = Math.random() * 1000 ;
-    this.sock.send(JSON.stringify(data));
-    this.maps.push({id: data.map_id, action: func})
-    //////////////////////////////////////////////
-    console.log("%c[SEND DATA]", colorLog('GREEN'))
-    console.log(data);
-    //////////////////////////////////////////////
+
+    if(!this.connected) {
+      setTimeout(()=>{this.request(data, func)}, 200)
+    }
+
+    if(this.connected) {
+
+      return new Promise((resolve, reject)=>{
+
+        data.map_id = Math.random() * 1000 ;
+        try {
+          this.sock.send(JSON.stringify(data));
+        } catch(e){
+          console.warn('no sock connection!');
+        }
+        this.maps.push({id: data.map_id, action: func})
+
+        ///////////////////////////////////////////////
+        console.log("%c[SEND DATA]", colorLog('GREEN'))
+        console.log(data);
+        //////////////////////////////////////////////
+
+      })
+
+
+    }
 
   }
+
 
   connect(){
     let self = this;
@@ -69,10 +90,7 @@ class Store {
     this.sock.onopen = function() {
 
       console.log('%cconnection open',colorLog());
-
-      self.request({action: 'Test'}, (data)=>{
-        alert(data.map_id);
-      })
+      self.connected = true;
 
     };
     this.sock.onmessage = function(e) {
@@ -114,11 +132,13 @@ class Model {
     let store = new Store();
     store.connect();
     Private.set(this, {store})
+    this.req = this.req.bind(this);
 
   }
   req(data){
     let { store } = Private.get(this);
-    store.request(data);
+    console.log(store)
+    return store.request(data);
   }
 }
 

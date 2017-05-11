@@ -28,15 +28,15 @@ func main() {
 }
 
 type DataSheme struct {
-	Data_Type     string `json:"data_type"`
-	Action_String string `json:"action_string"`
-	Log_List      map[string]string
-	Request_Map   map[string]string
-	Trans_Map     map[string]string
+	Data_Type     string            `json:"data_type"`
+	Action_String string            `json:"action_string"`
+	Log_List      map[string]string `json:"log_list"`
+	Request_Map   map[string]string `json:"request_map"`
+	Trans_Map     map[string]string `json:"trans_map"`
 }
 
 func (t *DataSheme) Foo() {
-	log.Println("ASSSSSSSSSSS")
+	log.Println("t.Data_Type")
 }
 
 func echoHandler(session sockjs.Session) {

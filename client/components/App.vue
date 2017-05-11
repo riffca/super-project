@@ -4,6 +4,21 @@
   </div>
 </template>
 
+<script>
+
+import * as authService from '../services/auth';
+
+export default {
+
+  mounted(){
+    authService.checkToken();
+  }
+
+}
+
+
+</script>
+
 <style>
 body {
   margin: 0;
