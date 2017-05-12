@@ -1,3 +1,7 @@
+const uuidV4 = require('uuid/v4');
+
+
+
 window.colorLog = (color='green', font=18)=>{
   let css = `
     color: ${color};
@@ -61,8 +65,8 @@ class Store {
 
       return new Promise((resolve,reject)=>{
 
-        data.map_id = "" + Math.random() * 1000;
-        data.token = localStorage.getItem('_token') || "create";
+        data.token = localStorage.getItem('token') || "tokendefault";
+        data.map_id = uuidV4();
 
         try {
 
@@ -123,6 +127,7 @@ class Store {
       }
     };
     this.sock.onclose = function() {
+      //alert("Нету соединения с сервером...Попробуйте перезагрузить страницу позже")
       console.log('%cconnection closed', colorLog('red'))
     };
 

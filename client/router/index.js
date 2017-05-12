@@ -10,6 +10,10 @@ export default new Router({
     {
       path: '/',
       component: Home
+    },
+    {
+      path: '/input',
+      component: require('../views/edit-landing')
     }
   ]
 })

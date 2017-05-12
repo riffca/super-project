@@ -56,6 +56,10 @@ module.exports = {
       {
         test: /\.svg$/,
         loader: 'raw-loader'
+      },
+      {
+        test: /\.pug$/,
+        loader: 'pug'
       }
     ]
   },

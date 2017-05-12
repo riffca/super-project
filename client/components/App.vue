@@ -14,11 +14,13 @@ export default {
 
     authService
       .checkToken({},data=>{
-        console.log('%cCOMPONENT LOG:', colorLog('darkyellow'));
-        console.log(data);
-        console.log('%cEND LOG:', colorLog('darkyellow'));
-        return data;
+        // console.log('%cCOMPONENT LOG:', colorLog('darkyellow'));
+        // console.log(data);
+        // console.log('%cEND LOG:', colorLog('darkyellow'));
+        // return data;
+
       })
+
   }
 }
 
