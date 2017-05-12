@@ -1,4 +1,4 @@
-window.colorLog = (color='green', font=20)=>{
+window.colorLog = (color='green', font=18)=>{
   let css = `
     color: ${color};
     font-size:${font}px;
@@ -59,23 +59,30 @@ class Store {
 
     if(this.connected) {
 
-      return new Promise((resolve, reject)=>{
+      return new Promise((resolve,reject)=>{
 
-        data.map_id = Math.random() * 1000 ;
+        data.map_id = "" + Math.random() * 1000;
+        data.token = localStorage.getItem('_token') || "create";
+
         try {
+
           this.sock.send(JSON.stringify(data));
+
         } catch(e){
+          reject();
           console.warn('no sock connection!');
+
         }
+
         this.maps.push({id: data.map_id, action: func})
 
         ///////////////////////////////////////////////
-        console.log("%c[SEND DATA]", colorLog('GREEN'))
+        console.log("%c[SEND DATA] %c" + data.service + ' ' + data.method, colorLog('green'), colorLog('grey',16))
         console.log(data);
         //////////////////////////////////////////////
+        resolve();
 
       })
-
 
     }
 
@@ -104,15 +111,15 @@ class Store {
         data = {temp: e.data}
       }
       //////////////////////////////////////////////
-      console.log("%c[GET DATA]", colorLog('blue'))
+      console.log("%c[GET DATA] %c" + data.service + ' ' + data.method, colorLog('blue'), colorLog('grey',16))
       console.log(data);
       //////////////////////////////////////////////
-      let action = self.maps.find(map=>{
+      let callback = self.maps.find(map=>{
         return map.id === data.map_id
       })
 
-      if(action) {
-        action.action(data);
+      if(callback) {
+        callback.action(data);
       }
     };
     this.sock.onclose = function() {
@@ -135,10 +142,13 @@ class Model {
     this.req = this.req.bind(this);
 
   }
-  req(data){
+  req(service, method, data, onMessage){
+
+    data.service = service;
+    data.method = method;
     let { store } = Private.get(this);
-    console.log(store)
-    return store.request(data);
+    return Promise.resolve().then(()=>{store.request(data, onMessage);})
+
   }
 }
 
