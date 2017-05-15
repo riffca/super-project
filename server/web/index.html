@@ -9,7 +9,9 @@
 
 <body>
 <h1>Echo - Web Example</h1>
-<form onSubmit='sock.send(document.getElementById("input").value); return false;'>
+
+<form onSubmit='sendData(event)'>
+
 Input text: <input id="input" focus="true" />
 <input type="submit" disabled="true" id="send" value="Send" />
 </form>

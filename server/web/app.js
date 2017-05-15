@@ -32,3 +32,14 @@ function send() {
 	text = document.getElementById("input").value;
 	sock.send(document.getElementById("input").value); return false;
 }
+
+function sendData(event) {
+
+  event.preventDefault();
+  let req = {
+    data: "stas"
+  }
+  sock.send(req);
+
+
+}

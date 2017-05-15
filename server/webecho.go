@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	//"fmt"
+	"fmt"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
@@ -33,6 +33,7 @@ type DataSheme struct {
 	Method  string `json:"method"`
 	Token   string `json:"token"`
 	MapId   string `json:"map_id"`
+	Data    string `json:"data"`
 }
 
 func (t *DataSheme) CheckToken() {
@@ -50,17 +51,24 @@ func echoHandler(session sockjs.Session) {
 		if msg, err := session.Recv(); err == nil {
 
 			var t DataSheme
+
 			json.Unmarshal([]byte(msg), &t)
 
-			log.Println(t.Token)
-			reflect.ValueOf(&t).MethodByName(t.Method).Call([]reflect.Value{})
+			if err != nil {
+				reflect.ValueOf(&t).MethodByName(t.Method).Call([]reflect.Value{})
+			}
 			response, _ := json.Marshal(&t)
+
 			session.Send(string(response))
 
 			continue
 
 		}
+
 		break
+
 	}
+
 	log.Println("sockjs session closed")
+
 }
