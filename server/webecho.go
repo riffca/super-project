@@ -29,11 +29,11 @@ func main() {
 }
 
 type DataSheme struct {
-	Service string `json:"service"`
-	Method  string `json:"method"`
-	Token   string `json:"token"`
-	MapId   string `json:"map_id"`
-	Data    string `json:"data"`
+	Service string                 `json:"service"`
+	Method  string                 `json:"method"`
+	Token   string                 `json:"token"`
+	MapId   string                 `json:"map_id"`
+	Data    map[string]interface{} `json:"data"`
 }
 
 func (t *DataSheme) CheckToken() {
@@ -54,9 +54,12 @@ func echoHandler(session sockjs.Session) {
 
 			json.Unmarshal([]byte(msg), &t)
 
-			if err != nil {
+			log.Println(t.Method)
+
+			if t.Method != "" {
 				reflect.ValueOf(&t).MethodByName(t.Method).Call([]reflect.Value{})
 			}
+
 			response, _ := json.Marshal(&t)
 
 			session.Send(string(response))

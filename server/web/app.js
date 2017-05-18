@@ -17,6 +17,7 @@ sock.onopen = function() {
 	//console.log('connection open');
 	document.getElementById("status").innerHTML = "connected";
 	document.getElementById("send").disabled=false;
+  sendData()
 };
 
 sock.onmessage = function(e) {
@@ -35,11 +36,24 @@ function send() {
 
 function sendData(event) {
 
-  event.preventDefault();
-  let req = {
-    data: "stas"
+  if(event)event.preventDefault();
+
+  let defaultRequest = {
+    data: {
+      name: "stas",
+      role: "admin"
+    }
   }
-  sock.send(req);
 
+  data = {
 
+    service: serviceInput.value,
+    method: methodInput.value,
+    data: {
+      name: 'stas'
+    }
+
+  }
+
+  sock.send(JSON.stringify(data ? data : defaultRequest));
 }

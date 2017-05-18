@@ -12,13 +12,26 @@
 
 <form onSubmit='sendData(event)'>
 
-Input text: <input id="input" focus="true" />
-<input type="submit" disabled="true" id="send" value="Send" />
+  Service <input id="serviceInput" focus="true" />
+  Action <input id="methodInput" focus="true" />
+  <input type="submit" disabled="true" id="send" value="Send" />
 </form>
+
+
 <br/>
 Messages from server:</br>
-<textarea cols=80 rows=20 id="output">
-</textarea>
+
+
+
+  <style>
+    textarea {
+      white-space: pre;
+
+    }
+
+  </style>
+  <textarea cols=80 rows=20 id="output">
+  </textarea>
 <br/>
 status: <span id="status">connecting...</span>
 
