@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
+	//"fmt"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
@@ -38,7 +38,7 @@ type DataSheme struct {
 
 func (t *DataSheme) CheckToken() {
 
-	t.Token = "Token"
+	t.Token = "ПОЛУЧИ ТОКЕН"
 
 }
 
@@ -54,9 +54,9 @@ func echoHandler(session sockjs.Session) {
 
 			json.Unmarshal([]byte(msg), &t)
 
-			log.Println(t.Method)
+			val := checkMethod(t.Method)
 
-			if t.Method != "" {
+			if val == true {
 				reflect.ValueOf(&t).MethodByName(t.Method).Call([]reflect.Value{})
 			}
 
@@ -74,4 +74,20 @@ func echoHandler(session sockjs.Session) {
 
 	log.Println("sockjs session closed")
 
+}
+
+func checkMethod(name string) bool {
+	global := []string{
+		"CheckToken",
+		"Auth",
+		"GetUser",
+		"GetPlan",
+	}
+	val := false
+	for _, s := range global {
+		if s == name {
+			val = true
+		}
+	}
+	return val
 }

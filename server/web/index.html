@@ -2,38 +2,49 @@
 <html lang="en">
 <head>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
-<script type="text/javascript" src="app.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
+<script type="text/javascript" src="channel.js"> </script>
 <meta charset="UTF-8">
+<style>
+
+  textarea {
+    display: block;
+    margin: 0 auto;
+    width: 800px;
+    height: 500px;
+    font-size: 1.5rem;
+  }
+
+</style>
 <title>Echo Web Example</title>
 </head>
 
 <body>
-<h1>Echo - Web Example</h1>
+  <div id="app">
+  <h1>Echo - Web Example</h1>
 
-<form onSubmit='sendData(event)'>
+  <form onSubmit='sendData(event)'>
 
-  Service <input id="serviceInput" focus="true" />
-  Action <input id="methodInput" focus="true" />
-  <input type="submit" disabled="true" id="send" value="Send" />
-</form>
-
-
-<br/>
-Messages from server:</br>
+    Service <input id="serviceInput" focus="true" />
+    Action <input id="methodInput" focus="true" />
+    <input type="submit" disabled="true" id="send" value="Send" />
+  </form>
 
 
+  <br/>
+  Messages from server:</br>
 
-  <style>
-    textarea {
-      white-space: pre;
+    <textarea cols=80 rows=20 id="output">
+    </textarea>
 
-    }
+  <br/>
+  status: <span id="status">connecting...</span>
 
-  </style>
-  <textarea cols=80 rows=20 id="output">
-  </textarea>
-<br/>
-status: <span id="status">connecting...</span>
 
+    <span @click="say">{{ name }}</span>
+  </div>
+
+  <script type="text/javascript" src="app.js"></script>
 </body>
+
 </html>
