@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	//"fmt"
+	service "./service"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
@@ -29,16 +30,18 @@ func main() {
 }
 
 type DataSheme struct {
-	Service string                 `json:"service"`
-	Method  string                 `json:"method"`
-	Token   string                 `json:"token"`
-	MapId   string                 `json:"map_id"`
-	Data    map[string]interface{} `json:"data"`
+	Service      string                 `json:"service"`
+	Method       string                 `json:"method"`
+	Token        string                 `json:"token"`
+	MapId        string                 `json:"map_id"`
+	RequestData  map[string]interface{} `json:"request_data"`
+	ResponseData map[string]interface{} `json:"response_data"`
 }
 
-func (t *DataSheme) CheckToken() {
+func (t *DataSheme) Echo() {
 
-	t.Token = "ПОЛУЧИ ТОКЕН"
+	t.ResponseData = t.RequestData
+	t.RequestData = nil
 
 }
 
@@ -51,19 +54,21 @@ func echoHandler(session sockjs.Session) {
 		if msg, err := session.Recv(); err == nil {
 
 			var t DataSheme
+			var a service.Auth
+
+			a.Token = "1234"
 
 			json.Unmarshal([]byte(msg), &t)
 
 			val := checkMethod(t.Method)
 
 			if val == true {
-				reflect.ValueOf(&t).MethodByName(t.Method).Call([]reflect.Value{})
+				reflect.ValueOf(&a).MethodByName(t.Method).Call([]reflect.Value{})
 			}
 
+			t.Echo()
 			response, _ := json.Marshal(&t)
-
 			session.Send(string(response))
-
 			continue
 
 		}
@@ -77,14 +82,23 @@ func echoHandler(session sockjs.Session) {
 }
 
 func checkMethod(name string) bool {
-	global := []string{
+
+	all := []string{
+
+		//AUTH
 		"CheckToken",
 		"Auth",
 		"GetUser",
 		"GetPlan",
+
+		//USER
+		"AuthUser",
+		"GetUser",
+		"CreateUser",
 	}
+
 	val := false
-	for _, s := range global {
+	for _, s := range all {
 		if s == name {
 			val = true
 		}

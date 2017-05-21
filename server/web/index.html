@@ -5,42 +5,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
 <script type="text/javascript" src="channel.js"> </script>
 <meta charset="UTF-8">
-<style>
-
-  textarea {
-    display: block;
-    margin: 0 auto;
-    width: 800px;
-    height: 500px;
-    font-size: 1.5rem;
-  }
-
-</style>
+<link rel="stylesheet" href="style.css"></link>
 <title>Echo Web Example</title>
 </head>
 
 <body>
   <div id="app">
   <h1>Echo - Web Example</h1>
-
   <form onSubmit='sendData(event)'>
-
     Service <input id="serviceInput" focus="true" />
     Action <input id="methodInput" focus="true" />
     <input type="submit" disabled="true" id="send" value="Send" />
   </form>
-
-
   <br/>
   Messages from server:</br>
-
     <textarea cols=80 rows=20 id="output">
     </textarea>
-
   <br/>
   status: <span id="status">connecting...</span>
-
-
     <span @click="say">{{ name }}</span>
   </div>
 

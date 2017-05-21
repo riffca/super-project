@@ -17,13 +17,16 @@ sock.onopen = function() {
 	//console.log('connection open');
 	document.getElementById("status").innerHTML = "connected";
 	document.getElementById("send").disabled=false;
+
   sendData(null,"CheckToken")
+
 };
 
 sock.onmessage = function(e) {
-  console.log("%cПринято<----------------", "color: darkgreen; font-size: 1.3rem")
-  console.log(JSON.parse(JSON.stringify(data)))
-  jsonPretty = JSON.stringify(JSON.parse(e.data),null,2);
+  let data = JSON.parse(e.data)
+  console.log("%cПринято<----------------" + data.method, "color: darkgreen; font-size: 1.3rem")
+  console.log(data)
+  jsonPretty = JSON.stringify(data,null,2);
 	document.getElementById("output").value += jsonPretty +"\n";
 
 };
@@ -54,7 +57,7 @@ function sendData(event, methodName) {
 
     service: serviceInput.value,
     method: methodInput.value,
-    data: {
+    request_data: {
       name: 'stas'
     }
 
