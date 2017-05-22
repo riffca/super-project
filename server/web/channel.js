@@ -18,7 +18,7 @@ sock.onopen = function() {
 	document.getElementById("status").innerHTML = "connected";
 	document.getElementById("send").disabled=false;
 
-  sendData(null,"CheckToken")
+  sendData(null,"User","Test")
 
 };
 
@@ -41,31 +41,23 @@ function send() {
 	sock.send(document.getElementById("input").value); return false;
 }
 
-function sendData(event, methodName) {
+function sendData(event, serviceName, methodName, data) {
 
   if(event)event.preventDefault();
 
-  let defaultRequest = {
-    data: {
-      name: "stas",
-      role: "admin"
-    }
-  }
-
-
   data = {
-
     service: serviceInput.value,
     method: methodInput.value,
     request_data: {
-      name: 'stas'
+      test: null
     }
+  } || data
 
-  }
-
+  if(serviceName) data.service = serviceName;
   if(methodName) data.method = methodName;
 
-  sock.send(JSON.stringify(data ? data : defaultRequest));
+  sock.send(JSON.stringify(data));
+
   console.log("%cОтправлено------------->", "color: darkblue; font-size: 1.3rem")
   console.log(JSON.parse(JSON.stringify(data)))
 

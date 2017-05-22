@@ -29,6 +29,11 @@ func main() {
 	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
+type Service struct {
+	Auth service.Auth
+	User service.User
+}
+
 type DataSheme struct {
 	Service      string                 `json:"service"`
 	Method       string                 `json:"method"`
@@ -54,16 +59,23 @@ func echoHandler(session sockjs.Session) {
 		if msg, err := session.Recv(); err == nil {
 
 			var t DataSheme
-			var a service.Auth
-
-			a.Token = "1234"
 
 			json.Unmarshal([]byte(msg), &t)
 
-			val := checkMethod(t.Method)
+			log.Println(t.Service)
 
-			if val == true {
-				reflect.ValueOf(&a).MethodByName(t.Method).Call([]reflect.Value{})
+			if t.Service == "Auth" {
+				s := service.Auth{"token"}
+				if val := checkMethod(t.Service, t.Method); val == true {
+					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+				}
+			}
+
+			if t.Service == "User" {
+				u := service.User{}
+				if val := checkMethod(t.Service, t.Method); val == true {
+					reflect.ValueOf(&u).MethodByName(t.Method).Call([]reflect.Value{})
+				}
 			}
 
 			t.Echo()
@@ -81,24 +93,20 @@ func echoHandler(session sockjs.Session) {
 
 }
 
-func checkMethod(name string) bool {
+func checkMethod(service string, name string) bool {
 
-	all := []string{
-
-		//AUTH
-		"CheckToken",
-		"Auth",
-		"GetUser",
-		"GetPlan",
-
-		//USER
-		"AuthUser",
-		"GetUser",
-		"CreateUser",
+	all := map[string][]string{
+		"User": {
+			"Test",
+		},
+		"Auth": {
+			"checkToken",
+		},
 	}
 
 	val := false
-	for _, s := range all {
+
+	for _, s := range all[service] {
 		if s == name {
 			val = true
 		}
