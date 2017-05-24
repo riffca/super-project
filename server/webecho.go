@@ -5,6 +5,9 @@ import (
 	"flag"
 	//"fmt"
 	service "./service"
+	shema "./shema"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
@@ -20,6 +23,9 @@ func init() {
 }
 
 func main() {
+
+	(*gorm.DB).Create(&shema.User{Name: "STAS"})
+
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
