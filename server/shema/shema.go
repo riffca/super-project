@@ -2,9 +2,12 @@ package shema
 
 import (
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"log"
 	"time"
 )
+
+var DB *gorm.DB
 
 type Model struct {
 	ID        uint `gorm:"primary_key;AUTO_INCREMENT"`
@@ -14,21 +17,26 @@ type Model struct {
 }
 
 type User struct {
-	gorm.Model
 	Name string
 }
 
-func main() {
-	//var app DataAepp
-	db, err := gorm.Open("sqlite3", "data.app")
-	defer db.Close()
-	if err != nil {
-		log.Println(err)
-	} else {
-		log.Println("connected to database!")
-	}
+func init() {
 
-	return
+	db, err := gorm.Open("sqlite3", "data.app")
+	db.LogMode(true)
+	defer db.Close()
+
+	if err != nil {
+
+		log.Println(err)
+
+	} else {
+
+		log.Println("connected to database!")
+
+		DB = db
+
+	}
 
 }
 

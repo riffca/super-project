@@ -1,12 +1,13 @@
 package main
 
 import (
-	"encoding/json"
-	"flag"
-	//"fmt"
 	service "./service"
 	shema "./shema"
-	"github.com/jinzhu/gorm"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"strings"
+	//gorm "github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
@@ -24,15 +25,50 @@ func init() {
 
 func main() {
 
-	(*gorm.DB).Create(&shema.User{Name: "STAS"})
-
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
 	http.Handle("/echo/", handler)
+	http.HandleFunc("/admin/refresh-tables", refreshTables)
 	http.Handle("/", http.FileServer(http.Dir("web/")))
 	log.Println("Server started on port: 9000")
 	log.Fatal(http.ListenAndServe(":9000", nil))
+
+}
+
+func refreshTables(w http.ResponseWriter, r *http.Request) {
+
+	//------------------CODE EXAMPLE---------------------------------
+	//https://astaxie.gitbooks.io/build-web-application-with-golang/en/03.2.html
+
+	log.Println(`
+    ---------------------------------------->
+    ------------Http Handle-------------
+    <--------------------------------------->`)
+
+	r.ParseForm()       // parse arguments, you have to call this by yourself
+	fmt.Println(r.Form) // print form information in server side
+	fmt.Println("path", r.URL.Path)
+	fmt.Println("scheme", r.URL.Scheme)
+	fmt.Println(r.Form["url_long"])
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
+	fmt.Fprintf(w, `
+    <h1>Скинули Базы</h1>
+  `) // send data to client side
+
+	//---------------------------------------------------------------
+
+	shema.DB.DropTable(&shema.User{})
+	shema.DB.CreateTable(&shema.User{})
+
+	log.Println(`
+    ---------------------------------------->
+    ------------TABLES REFRESHED-------------
+    <--------------------------------------->`)
+
 }
 
 type Service struct {
