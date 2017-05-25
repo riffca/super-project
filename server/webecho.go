@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	//"os"
 	"strings"
 	//gorm "github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -24,7 +25,8 @@ func init() {
 }
 
 func main() {
-
+	shema.DB.HasTable(&shema.User{})
+	log.Println(shema.DB.HasTable(&shema.User{}))
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
@@ -51,39 +53,11 @@ func refreshTables(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("path", r.URL.Path)
 	fmt.Println("scheme", r.URL.Scheme)
 	fmt.Println(r.Form["url_long"])
-
-	var action string
-	var table string
-
 	for k, v := range r.Form {
 		fmt.Println("key:", k)
 		fmt.Println("val:", strings.Join(v, ""))
-
-		val := strings.Join(v, "")
-		action = k
-		table = val
-		switch k {
-		case "create":
-			switch val {
-			case "user":
-				shema.DB.CreateTable(&shema.User{})
-			case "page":
-				shema.DB.CreateTable(&shema.Page{})
-			case "all":
-				shema.DB.CreateTable(&shema.User{}, &shema.Page{})
-			}
-		case "drop":
-			switch val {
-			case "user":
-				shema.DB.DropTable(&shema.User{})
-			case "page":
-				shema.DB.DropTable(&shema.Page{})
-			case "all":
-				shema.DB.DropTable(&shema.User{}, &shema.Page{})
-			}
-		}
 	}
-	fmt.Fprintf(w, "<h1>Done"+action+"  "+table+"</h1>") // send data to client side
+	fmt.Fprintf(w, "<h1>ВСЕ ОК</h1>") // send data to client side
 
 }
 
