@@ -29,7 +29,7 @@ func main() {
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
 	http.Handle("/echo/", handler)
-	http.HandleFunc("/admin/refresh-tables", refreshTables)
+	http.HandleFunc("/admin/table", refreshTables)
 	http.Handle("/", http.FileServer(http.Dir("web/")))
 	log.Println("Server started on port: 9000")
 	log.Fatal(http.ListenAndServe(":9000", nil))
@@ -51,23 +51,39 @@ func refreshTables(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("path", r.URL.Path)
 	fmt.Println("scheme", r.URL.Scheme)
 	fmt.Println(r.Form["url_long"])
+
+	var action string
+	var table string
+
 	for k, v := range r.Form {
 		fmt.Println("key:", k)
 		fmt.Println("val:", strings.Join(v, ""))
+
+		val := strings.Join(v, "")
+		action = k
+		table = val
+		switch k {
+		case "create":
+			switch val {
+			case "user":
+				shema.DB.CreateTable(&shema.User{})
+			case "page":
+				shema.DB.CreateTable(&shema.Page{})
+			case "all":
+				shema.DB.CreateTable(&shema.User{}, &shema.Page{})
+			}
+		case "drop":
+			switch val {
+			case "user":
+				shema.DB.DropTable(&shema.User{})
+			case "page":
+				shema.DB.DropTable(&shema.Page{})
+			case "all":
+				shema.DB.DropTable(&shema.User{}, &shema.Page{})
+			}
+		}
 	}
-	fmt.Fprintf(w, `
-    <h1>Скинули Базы</h1>
-  `) // send data to client side
-
-	//---------------------------------------------------------------
-
-	shema.DB.DropTable(&shema.User{})
-	shema.DB.CreateTable(&shema.User{})
-
-	log.Println(`
-    ---------------------------------------->
-    ------------TABLES REFRESHED-------------
-    <--------------------------------------->`)
+	fmt.Fprintf(w, "<h1>Done"+action+"  "+table+"</h1>") // send data to client side
 
 }
 

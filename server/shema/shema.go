@@ -20,6 +20,9 @@ type User struct {
 	Name string
 }
 
+type Page struct {
+}
+
 func init() {
 
 	db, err := gorm.Open("sqlite3", "data.app")
