@@ -1,4 +1,4 @@
-package shema
+package schema
 
 import (
 	"github.com/jinzhu/gorm"
@@ -14,14 +14,6 @@ type Model struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time
-}
-
-type User struct {
-	Name string
-}
-
-type Page struct {
-	Content string
 }
 
 func init() {

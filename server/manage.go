@@ -1,7 +1,7 @@
 package main
 
 import (
-	shema "./shema"
+	schema "./shema"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"os"
