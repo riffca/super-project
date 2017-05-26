@@ -1,7 +1,7 @@
-package main
+package manage
 
 import (
-	schema "./shema"
+	schema "./schema"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"os"
@@ -39,20 +39,20 @@ func main() {
 		case "create":
 			switch os.Args[2] {
 			case "user":
-				db.CreateTable(&shema.User{})
+				db.CreateTable(&schema.User{})
 			case "page":
-				db.CreateTable(&shema.Page{})
+				db.CreateTable(&schema.Page{})
 			case "all":
-				db.CreateTable(&shema.User{}, &shema.Page{})
+				db.CreateTable(&schema.User{}, &schema.Page{})
 			}
 		case "drop":
 			switch os.Args[2] {
 			case "user":
-				db.DropTable(&shema.User{})
+				db.DropTable(&schema.User{})
 			case "page":
-				db.DropTable(&shema.Page{})
+				db.DropTable(&schema.Page{})
 			case "all":
-				db.DropTable(&shema.User{}, &shema.Page{})
+				db.DropTable(&schema.User{}, &schema.Page{})
 			}
 		}
 	}

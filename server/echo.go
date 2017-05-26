@@ -1,8 +1,8 @@
 package main
 
 import (
+	schema "./schema"
 	service "./service"
-	shema "./shema"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -25,8 +25,8 @@ func init() {
 }
 
 func main() {
-	shema.DB.HasTable(&shema.User{})
-	log.Println(shema.DB.HasTable(&shema.User{}))
+	schema.DB.HasTable(&schema.User{})
+	log.Println(schema.DB.HasTable(&schema.User{}))
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
@@ -96,19 +96,21 @@ func echoHandler(session sockjs.Session) {
 
 			log.Println(t.Service)
 
-			if t.Service == "Auth" {
-				s := service.Auth{"token"}
-				if val := checkMethod(t.Service, t.Method); val == true {
-					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
-				}
-			}
+			activateAction(*service.Service{}, t.Service, t.Method)
 
-			if t.Service == "User" {
-				u := service.User{}
-				if val := checkMethod(t.Service, t.Method); val == true {
-					reflect.ValueOf(&u).MethodByName(t.Method).Call([]reflect.Value{})
-				}
-			}
+			// if t.Service == "Auth" {
+			//  s := service.Auth{Data: t.RequestData}
+			//  if val := checkMethod(t.Service, t.Method); val == true {
+			//    reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+			//  }
+			// }
+
+			// if t.Service == "User" {
+			//  u := service.User{Data: t.RequestData}
+			//  if val := checkMethod(t.Service, t.Method); val == true {
+			//    reflect.ValueOf(&u).MethodByName(t.Method).Call([]reflect.Value{})
+			//  }
+			// }
 
 			t.Echo()
 			response, _ := json.Marshal(&t)
@@ -144,4 +146,14 @@ func checkMethod(service string, name string) bool {
 		}
 	}
 	return val
+}
+
+func activateAction(s *service.Service, service string, method string) {
+
+	r := reflect.ValueOf(&s.Service{})
+
+	f := reflect.Indirect(r).FieldByName(service)
+
+	reflect.ValueOf(&f).MethodByName(method).Call([]reflect.Value{})
+
 }
