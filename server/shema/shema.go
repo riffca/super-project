@@ -4,7 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"log"
-	//"os"
 	"time"
 )
 
@@ -27,7 +26,7 @@ type Page struct {
 
 func init() {
 
-	db, err := gorm.Open("sqlite3", "data.app")
+	db, err := gorm.Open("sqlite3", "data")
 	db.LogMode(true)
 	defer db.Close()
 
@@ -43,37 +42,6 @@ func init() {
 
 	}
 
-	//DB.DropTable(&User{}, &Page{})
-	//DB.CreateTable(&User{}, &Page{})
-
-	// if len(os.Args) >= 0 {
-	//  switch os.Args[1] {
-	//  case "create":
-	//    switch os.Args[2] {
-	//    case "user":
-	//      DB.CreateTable(&User{})
-	//    case "page":
-	//      DB.CreateTable(&Page{})
-	//    case "all":
-	//      DB.CreateTable(&User{}, &Page{})
-	//    }
-	//  case "drop":
-	//    switch os.Args[2] {
-	//    case "user":
-	//      DB.DropTable(&User{})
-	//    case "page":
-	//      DB.DropTable(&Page{})
-	//    case "all":
-	//      DB.DropTable(&User{}, &Page{})
-	//    }
-	//  }
-
-	// }
-
 }
 
-func New() gorm.DB {
-	return &DB
-}
-
-//http://motion-express.com/blog/gorm:-a-simple-guide-on-crud
+/*http://motion-express.com/blog/gorm:-a-simple-guide-on-crud*/
