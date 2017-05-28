@@ -1,7 +1,7 @@
 package main
 
 import (
-	schema "./schema"
+	//schema "./schema"
 	service "./service"
 	"encoding/json"
 	"flag"
@@ -24,9 +24,24 @@ func init() {
 	flag.Parse()
 }
 
+type DataSheme struct {
+	Service      string                 `json:"service"`
+	Method       string                 `json:"method"`
+	Token        string                 `json:"token"`
+	MapId        string                 `json:"map_id"`
+	RequestData  map[string]interface{} `json:"request_data"`
+	ResponseData map[string]interface{} `json:"response_data"`
+}
+
+func (t *DataSheme) Echo() {
+
+	t.ResponseData = t.RequestData
+	t.RequestData = nil
+
+}
+
 func main() {
-	schema.DB.HasTable(&schema.User{})
-	log.Println(schema.DB.HasTable(&schema.User{}))
+
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
@@ -61,27 +76,6 @@ func refreshTables(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type Service struct {
-	Auth service.Auth
-	User service.User
-}
-
-type DataSheme struct {
-	Service      string                 `json:"service"`
-	Method       string                 `json:"method"`
-	Token        string                 `json:"token"`
-	MapId        string                 `json:"map_id"`
-	RequestData  map[string]interface{} `json:"request_data"`
-	ResponseData map[string]interface{} `json:"response_data"`
-}
-
-func (t *DataSheme) Echo() {
-
-	t.ResponseData = t.RequestData
-	t.RequestData = nil
-
-}
-
 func echoHandler(session sockjs.Session) {
 
 	log.Println("new sockjs session established")
@@ -94,23 +88,21 @@ func echoHandler(session sockjs.Session) {
 
 			json.Unmarshal([]byte(msg), &t)
 
-			log.Println(t.Service)
+			log.Println(t.RequestData)
 
-			activateAction(*service.Service{}, t.Service, t.Method)
+			if t.Service == "Auth" {
+				s := service.Auth{Data: t.RequestData}
+				if val := service.CheckMethod(t.Service, t.Method); val == true {
+					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+				}
+			}
 
-			// if t.Service == "Auth" {
-			//  s := service.Auth{Data: t.RequestData}
-			//  if val := checkMethod(t.Service, t.Method); val == true {
-			//    reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
-			//  }
-			// }
-
-			// if t.Service == "User" {
-			//  u := service.User{Data: t.RequestData}
-			//  if val := checkMethod(t.Service, t.Method); val == true {
-			//    reflect.ValueOf(&u).MethodByName(t.Method).Call([]reflect.Value{})
-			//  }
-			// }
+			if t.Service == "User" {
+				u := service.User{Data: t.RequestData}
+				if val := service.CheckMethod(t.Service, t.Method); val == true {
+					reflect.ValueOf(&u).MethodByName(t.Method).Call([]reflect.Value{})
+				}
+			}
 
 			t.Echo()
 			response, _ := json.Marshal(&t)
@@ -127,33 +119,14 @@ func echoHandler(session sockjs.Session) {
 
 }
 
-func checkMethod(service string, name string) bool {
+// func activateAction(serviceName string, method string) {
 
-	all := map[string][]string{
-		"User": {
-			"Test",
-		},
-		"Auth": {
-			"checkToken",
-		},
-	}
+//  fmt.Println(&service.Service)
 
-	val := false
+//  r := reflect.ValueOf(&service.Service)
 
-	for _, s := range all[service] {
-		if s == name {
-			val = true
-		}
-	}
-	return val
-}
+//  f := reflect.Indirect(r).FieldByName(serviceName)
 
-func activateAction(s *service.Service, service string, method string) {
+//  reflect.ValueOf(&f).MethodByName(method).Call([]reflect.Value{})
 
-	r := reflect.ValueOf(&s.Service{})
-
-	f := reflect.Indirect(r).FieldByName(service)
-
-	reflect.ValueOf(&f).MethodByName(method).Call([]reflect.Value{})
-
-}
+// }

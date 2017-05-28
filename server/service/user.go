@@ -6,10 +6,12 @@ import (
 )
 
 type User struct {
-	Data interface{}
+	Data map[string]interface{}
 }
 
 func (u *User) Test() {
+
+	fmt.Println(u.Data["test"])
 	fmt.Println("Test User")
 }
 

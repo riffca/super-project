@@ -5,6 +5,7 @@ import (
 )
 
 type Auth struct {
+	Data  interface{}
 	Token string
 }
 
