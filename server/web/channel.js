@@ -49,7 +49,7 @@ function sendData(event, serviceName, methodName, data) {
     service: serviceInput.value,
     method: methodInput.value,
     request_data: {
-      test: "Привет"
+      test: 666
     }
   } || data
 

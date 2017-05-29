@@ -5,7 +5,7 @@ import (
 )
 
 type Auth struct {
-	Data  interface{}
+	Data  map[string]interface{}
 	Token string
 }
 

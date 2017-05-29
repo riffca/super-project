@@ -6,14 +6,24 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	//"os"
+	"os"
 	"strings"
 	//gorm "github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	//_ "github.com/jinzhu/gorm/dialects/sqlite"
+
+	pb "./service/chat/proto"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
 	"reflect"
+)
+
+const (
+	address     = "localhost:50051"
+	defaultName = "world"
 )
 
 var (
@@ -42,6 +52,7 @@ func (t *DataSheme) Echo() {
 
 func main() {
 
+	contactChatService()
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
@@ -130,3 +141,24 @@ func echoHandler(session sockjs.Session) {
 //  reflect.ValueOf(&f).MethodByName(method).Call([]reflect.Value{})
 
 // }
+
+func contactChatService() {
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
+
+	// Contact the server and print out its response.
+	name := defaultName
+	if len(os.Args) > 1 {
+		name = os.Args[1]
+	}
+	r, err := c.SayHello(context.Background(), &pb.HelloRequest{Name: name})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.Message)
+}

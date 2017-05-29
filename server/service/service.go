@@ -5,7 +5,7 @@ func init() {
 }
 
 func CheckMethod(service string, name string) bool {
-	all := map[string][]string{
+	schema := map[string][]string{
 		"User": {
 			"Test",
 		},
@@ -14,7 +14,7 @@ func CheckMethod(service string, name string) bool {
 		},
 	}
 	val := false
-	for _, s := range all[service] {
+	for _, s := range schema[service] {
 		if s == name {
 			val = true
 		}
