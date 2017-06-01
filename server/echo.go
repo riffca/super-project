@@ -1,7 +1,7 @@
 package main
 
 import (
-	//schema "./schema"
+	schema "./schema"
 	service "./service"
 	"encoding/json"
 	"flag"
@@ -52,7 +52,9 @@ func (t *DataSheme) Echo() {
 
 func main() {
 
-	contactChatService()
+	log.Println("Database connected:", schema.Connected)
+
+	//contactChatService()
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
@@ -101,21 +103,28 @@ func echoHandler(session sockjs.Session) {
 
 			log.Println(t.RequestData)
 
-			if t.Service == "Auth" {
-				s := service.Auth{Data: t.RequestData}
-				if val := service.CheckMethod(t.Service, t.Method); val == true {
+			if val := service.CheckMethod(t.Service, t.Method); val == true {
+
+				if t.Service == "Auth" {
+					s := service.Auth{Data: t.RequestData}
+					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+
+				}
+
+				if t.Service == "User" {
+					s := service.User{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 				}
-			}
 
-			if t.Service == "User" {
-				u := service.User{Data: t.RequestData}
-				if val := service.CheckMethod(t.Service, t.Method); val == true {
-					reflect.ValueOf(&u).MethodByName(t.Method).Call([]reflect.Value{})
+				if t.Service == "Page" {
+					s := service.Page{Data: t.RequestData}
+					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 				}
+
 			}
 
 			t.Echo()
+
 			response, _ := json.Marshal(&t)
 			session.Send(string(response))
 			continue

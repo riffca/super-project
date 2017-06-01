@@ -8,6 +8,7 @@ import (
 )
 
 var DB *gorm.DB
+var Connected bool
 
 type Model struct {
 	ID        uint `gorm:"primary_key;AUTO_INCREMENT"`
@@ -23,16 +24,16 @@ func init() {
 	defer db.Close()
 
 	if err != nil {
-
 		log.Println(err)
-
-	} else {
-
-		log.Println("connected to database!")
-
-		DB = db
-
+		return
 	}
+
+	log.Println("connected to database!")
+
+	DB = db
+	Connected = true
+
+	db.CreateTable(&User{}, &Page{})
 
 }
 

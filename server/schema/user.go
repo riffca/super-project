@@ -2,5 +2,6 @@ package schema
 
 type User struct {
 	Model
-	Name string
+	Name  string
+	Leads []Lead
 }

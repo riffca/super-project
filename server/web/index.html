@@ -3,7 +3,7 @@
 <head>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
-<script type="text/javascript" src="channel.js"> </script>
+
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css"></link>
 <title>Echo Web Example</title>
@@ -11,21 +11,48 @@
 
 <body>
   <div id="app">
-  <h1>Echo - Web Example</h1>
-  <form onSubmit='sendData(event)'>
-    Service <input id="serviceInput" focus="true" />
-    Action <input id="methodInput" focus="true" />
-    <input type="submit" disabled="true" id="send" value="Send" />
-  </form>
-  <br/>
-  Messages from server:</br>
-    <textarea cols=80 rows=20 id="output">
-    </textarea>
-  <br/>
-  status: <span id="status">connecting...</span>
-    <span @click="say">{{ name }}</span>
+
+    <div class="container">
+
+      <h1>Админка</h1>
+
+      <div class="form-container">
+
+        <form onSubmit='sendData(event)'>
+
+          <div class="input-container">
+            <label for="serviceInput">Service</label>
+            <input id="serviceInput" focus="true" />
+          </div>
+
+          <div class="input-container">
+            <label for="methodInput">Method</label>
+            <input id="methodInput" focus="true" />
+          </div>
+
+          <input class="send-button" type="submit" disabled="true" id="send" value="Send" />
+
+        </form>
+
+        <textarea cols=80 rows=20 id="output">
+
+        </textarea>
+
+      </div>
+
+      <h1>Response Data</h1>
+      <div class="server-messages">
+        <pre>{{response.response_data}}</pre>
+      </div>
+
+
+      status: <span id="status">connecting...</span>
+        <span>{{ name }}</span>
+
+    </div>
   </div>
 
+  <script type="text/javascript" src="channel.js"> </script>
   <script type="text/javascript" src="app.js"></script>
 </body>
 

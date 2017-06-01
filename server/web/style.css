@@ -1,7 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 textarea {
+  top: 20px;
+  position: relative;
   display: block;
   margin: 0 auto;
-  width: 800px;
-  height: 500px;
+  width: 500px;
+  height: 300px;
   font-size: 1.5rem;
 }
+
+
+.container {
+  max-width: 1050px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.form-container {
+  margin: 20px;
+}
+
+
+.input-container {
+  display: inline-block;
+  font-size: 1.4rem;
+
+}
+
+.input-container input {
+  width: 100px;
+  height: 20px;
+  margin: 5px 10px;
+  font-size: 1.4rem;
+  padding: 5px;
+}
+
+.input-container label {
+  width: 100px;
+  height: 20px;
+  margin: 5px 10px;
+  cursor: pointer;
+}
+
+.send-button {
+  width: 150px;
+  font-size: 1.5rem;
+  margin: 10px;
+}
+
+.server-messages {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+  font-size: 1.3rem;
+}
+
+
+
+
