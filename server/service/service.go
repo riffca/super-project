@@ -4,8 +4,11 @@ func init() {
 
 }
 
+var MethodMap map[string]interface{}
+
 func CheckMethod(service string, name string) bool {
-	schema := map[string][]string{
+
+	MethodMap := map[string][]string{
 		"User": {
 			"Test",
 		},
@@ -13,8 +16,9 @@ func CheckMethod(service string, name string) bool {
 			"checkToken",
 		},
 	}
+
 	val := false
-	for _, s := range schema[service] {
+	for _, s := range MethodMap[service] {
 		if s == name {
 			val = true
 		}

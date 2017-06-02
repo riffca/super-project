@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
 
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css"></link>
-<title>Echo Web Example</title>
+<title>Tester</title>
 </head>
 
 <body>
@@ -14,25 +14,21 @@
 
     <div class="container">
 
-      <h1>Админка</h1>
+      <h1>Admin Tester</h1>
 
       <div class="form-container">
 
-        <form onSubmit='sendData(event)'>
+        <div class="input-container">
+          <label for="serviceInput">Service</label>
+          <input v-model="service" id="serviceInput" focus="true" />
+        </div>
 
-          <div class="input-container">
-            <label for="serviceInput">Service</label>
-            <input id="serviceInput" focus="true" />
-          </div>
+        <div class="input-container">
+          <label for="methodInput">Method</label>
+          <input v-model="method" id="methodInput" focus="true" />
+        </div>
 
-          <div class="input-container">
-            <label for="methodInput">Method</label>
-            <input id="methodInput" focus="true" />
-          </div>
-
-          <input class="send-button" type="submit" disabled="true" id="send" value="Send" />
-
-        </form>
+        <button class="send-button" @click="send">send</button>
 
         <textarea cols=80 rows=20 id="output">
 
@@ -42,7 +38,7 @@
 
       <h1>Response Data</h1>
       <div class="server-messages">
-        <pre>{{response.response_data}}</pre>
+        <pre>{{response}}</pre>
       </div>
 
 

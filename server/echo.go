@@ -93,6 +93,12 @@ func echoHandler(session sockjs.Session) {
 
 	log.Println("new sockjs session established")
 
+	d := DataSheme{ResponseData: ""}
+
+	r, _ := json.Marshal(&d)
+
+	session.Send(string(r))
+
 	for {
 
 		if msg, err := session.Recv(); err == nil {
@@ -101,7 +107,7 @@ func echoHandler(session sockjs.Session) {
 
 			json.Unmarshal([]byte(msg), &t)
 
-			log.Println(t.RequestData)
+			log.Println("Request Data: ", t.RequestData)
 
 			if val := service.CheckMethod(t.Service, t.Method); val == true {
 
