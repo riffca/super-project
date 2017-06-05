@@ -1,14 +1,9 @@
 package service
 
+var MethodMap map[string][]string
+
 func init() {
-
-}
-
-var MethodMap map[string]interface{}
-
-func CheckMethod(service string, name string) bool {
-
-	MethodMap := map[string][]string{
+	MethodMap = map[string][]string{
 		"User": {
 			"Test",
 		},
@@ -17,6 +12,9 @@ func CheckMethod(service string, name string) bool {
 		},
 	}
 
+}
+
+func CheckMethod(service string, name string) bool {
 	val := false
 	for _, s := range MethodMap[service] {
 		if s == name {

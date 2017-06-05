@@ -93,7 +93,18 @@ func echoHandler(session sockjs.Session) {
 
 	log.Println("new sockjs session established")
 
-	d := DataSheme{ResponseData: ""}
+	i := make(map[string]interface{})
+
+	log.Println(service.MethodMap)
+	for k, v := range service.MethodMap {
+		i[k] = v
+	}
+
+	d := DataSheme{
+		Service:      "All",
+		Method:       "Methods",
+		ResponseData: i,
+	}
 
 	r, _ := json.Marshal(&d)
 
