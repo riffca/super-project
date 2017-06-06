@@ -66,10 +66,9 @@ func main() {
 
 }
 
+//------------------CODE EXAMPLE---------------------------------
+//https://astaxie.gitbooks.io/build-web-application-with-golang/en/03.2.html
 func refreshTables(w http.ResponseWriter, r *http.Request) {
-
-	//------------------CODE EXAMPLE---------------------------------
-	//https://astaxie.gitbooks.io/build-web-application-with-golang/en/03.2.html
 
 	log.Println(`
     ---------------------------------------->
@@ -93,8 +92,7 @@ func echoHandler(session sockjs.Session) {
 
 	log.Println("new sockjs session established")
 
-	m := getMap()
-	session.Send(string(m))
+	session.Send(getServiceMap())
 
 	for {
 
@@ -111,7 +109,6 @@ func echoHandler(session sockjs.Session) {
 				if t.Service == "Auth" {
 					s := service.Auth{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
-
 				}
 
 				if t.Service == "User" {
@@ -175,7 +172,7 @@ func contactChatService() {
 	log.Printf("Greeting: %s", r.Message)
 }
 
-func getMap() {
+func getServiceMap() string {
 
 	i := make(map[string]interface{})
 
@@ -186,13 +183,13 @@ func getMap() {
 	}
 
 	d := DataSheme{
-		Service:      "All",
-		Method:       "Methods",
+		Service:      "Get",
+		Method:       "Services",
 		ResponseData: i,
 	}
 
 	r, _ := json.Marshal(&d)
 
-	return r
+	return string(r)
 
 }

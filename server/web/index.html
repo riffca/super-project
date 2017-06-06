@@ -38,7 +38,7 @@
         <div class="model-container">
           <select v-model="method">
             <option disabled value="">Метод</option>
-            <option v-for="method in methods">{{method}}</option>
+            <option v-for="method in removeJsonMethods">{{method}}</option>
           </select>
         </div>
 
@@ -51,7 +51,7 @@
 
         <div class="model-tab" v-if="actionName == 'ОБНОВИТЬ'">
           <div class="model-container">
-            <textarea cols=80 rows=20 id="output">
+            <textarea cols=80 rows=20 id="output" ref="textarea" :value="schemaPretty">
             </textarea>
           </div>
         </div>

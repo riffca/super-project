@@ -1,7 +1,7 @@
 package service
 
 import (
-	//schema "../schema"
+	schema "../schema"
 	"fmt"
 )
 
@@ -17,4 +17,8 @@ func (u *User) Test() {
 
 func (u *User) Create() {
 
+}
+
+func (p *User) GetScheme() schema.User {
+	return schema.User{}
 }
