@@ -6,12 +6,12 @@ func init() {
 	MethodMap = map[string][]string{
 		"User": {
 			"Test",
+			"Go",
 		},
 		"Auth": {
 			"checkToken",
 		},
 	}
-
 }
 
 func CheckMethod(service string, name string) bool {

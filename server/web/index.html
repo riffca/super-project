@@ -18,32 +18,76 @@
 
       <div class="form-container">
 
-        <div class="input-container">
+<!--         <div class="model-container">
           <label for="serviceInput">Service</label>
           <input v-model="service" id="serviceInput" focus="true" />
         </div>
 
-        <div class="input-container">
+        <div class="model-container">
           <label for="methodInput">Method</label>
           <input v-model="method" id="methodInput" focus="true" />
+        </div> -->
+
+
+        <div class="model-container">
+          <select v-model="service">
+            <option disabled value="">Сервис</option>
+            <option v-for="service in services">{{service}}</option>
+          </select>
+        </div>
+        <div class="model-container">
+          <select v-model="method">
+            <option disabled value="">Метод</option>
+            <option v-for="method in methods">{{method}}</option>
+          </select>
         </div>
 
-        <button class="send-button" @click="send">send</button>
+        <button class="send-button" @click="send">{{ actionName }}</button>
 
-        <textarea cols=80 rows=20 id="output">
+        <div class="switch-container">
+          <span @click="actionName = 'ДЕРНУТЬ'">Get</span>
+          <span @click="actionName = 'ОБНОВИТЬ'">Update</span>
+        </div>
 
-        </textarea>
+        <div class="model-tab" v-if="actionName == 'ОБНОВИТЬ'">
+          <div class="model-container">
+            <textarea cols=80 rows=20 id="output">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="model-tab" v-if="actionName == 'ДЕРНУТЬ'">
+          <div class="model-container">
+            <label for="methodInput">Method</label>
+            <input v-model="method" id="methodInput" focus="true" />
+            <label for="methodInput">Method</label>
+            <input v-model="method" id="methodInput" focus="true" />
+            <label for="methodInput">Method</label>
+            <input v-model="method" id="methodInput" focus="true" />
+          </div>
+        </div>
+
+
+        <div>
+          <div class="add-block">+</div>
+        </div>
 
       </div>
 
-      <h1>Response Data</h1>
-      <div class="server-messages">
-        <pre>{{response}}</pre>
-      </div>
 
 
       status: <span id="status">connecting...</span>
         <span>{{ name }}</span>
+
+    </div>
+    <div class="response">
+
+      <h1>Response Data</h1>
+
+      <div class="server-messages">
+        <pre>{{response}}</pre>
+      </div>
+
 
     </div>
   </div>

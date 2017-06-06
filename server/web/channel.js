@@ -2,7 +2,8 @@ class Channel {
 
   constructor(){
     this.sock = null;
-    this.box = [];
+    this.reqBox = [];
+    this.eventBox = [];
     this.connected = false;
     this.init();
   }
@@ -65,6 +66,18 @@ class Channel {
 
 
   }
+  on(service,method,callback){
+
+    var e = {}
+    e.event = service + ' ' + method
+    e.func = null || callback
+    this.eventBox.push(e)
+
+    console.log("%Прослушан----------> " +
+      service + " " + method,
+      "color: darkblue; font-size: 1.3rem")
+
+  }
 
   req(service, method, data, callback){
     var self = this
@@ -78,7 +91,7 @@ class Channel {
     var o = {}
     o.id = Math.random() + ""
     o.func = null || callback
-    this.box.push(o)
+    this.reqBox.push(o)
 
     var request = {
       map_id: o.id,
@@ -97,7 +110,15 @@ class Channel {
   }
 
   execHandler(data){
-    this.box.forEach(function(i){
+
+    this.eventBox.forEach(function(i){
+      if(i.event == (data.service + " " + data.method)){
+        i.func(data.response_data)
+      }
+    })
+
+
+    this.reqBox.forEach(function(i){
       if(i.id == data.map_id && i.func){
         i.func(data.response_data)
       }

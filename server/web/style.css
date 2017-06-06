@@ -13,11 +13,26 @@ textarea {
   font-size: 1.5rem;
 }
 
+.app {
+
+  justify-content: center;
+}
+
 
 .container {
   max-width: 1050px;
   margin: 0 auto;
   text-align: center;
+  margin-left: 5%;
+}
+
+.container, .response {
+  display: inline-block;
+
+}
+
+.response {
+  height: 100%;
 }
 
 .form-container {
@@ -25,13 +40,13 @@ textarea {
 }
 
 
-.input-container {
+.model-container {
   display: inline-block;
   font-size: 1.4rem;
 
 }
 
-.input-container input {
+.model-container input, select {
   width: 100px;
   height: 20px;
   margin: 5px 10px;
@@ -39,17 +54,40 @@ textarea {
   padding: 5px;
 }
 
-.input-container label {
+select  {
+  height: 60px;
+  width: 120px;
+}
+.switch-container {
+  padding: 20px;
+  font-size: 1.4rem;
+}
+.switch-container span {
+  display: inline-block;
+  cursor: pointer;
+  width: 200px;
+  padding: 10px;
+  border: 1px solid grey;
+}
+
+
+.model-container label {
   width: 100px;
   height: 20px;
   margin: 5px 10px;
   cursor: pointer;
 }
 
+.model-tab {
+  height: 400px;
+}
+
 .send-button {
   width: 150px;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: lighter;
   margin: 10px;
+  padding: 12px;
 }
 
 .server-messages {
@@ -58,6 +96,17 @@ textarea {
   margin: 0 auto;
   font-size: 1.3rem;
 }
+
+.add-block {
+  display: inline-block;
+  border: 1px solid grey;
+  margin: 0 auto;
+  font-size: 2.5rem;
+  cursor: pointer;
+  padding: 10px 30px;
+}
+
+
 
 
 
