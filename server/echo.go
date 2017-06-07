@@ -109,16 +109,20 @@ func echoHandler(session sockjs.Session) {
 				if t.Service == "Auth" {
 					s := service.Auth{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+					//modefy request data
+					t.RequestData = s.Data
 				}
 
 				if t.Service == "User" {
 					s := service.User{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+					t.RequestData = s.Data
 				}
 
 				if t.Service == "Page" {
 					s := service.Page{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+					t.RequestData = s.Data
 				}
 
 			}

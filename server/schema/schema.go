@@ -33,7 +33,7 @@ func init() {
 	DB = db
 	Connected = true
 
-	db.CreateTable(&User{}, &Page{})
+	//db.CreateTable(&User{}, &Page{})
 
 }
 

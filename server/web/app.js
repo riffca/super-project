@@ -13,7 +13,7 @@ window.Application = new Vue({
       services: [],
       methods: [],
       all: {},
-      actionName: "",
+      actionName: "СОЗДАТЬ",
       jsonSchema: "",
       requestJSON: {},
 
@@ -65,11 +65,14 @@ window.Application = new Vue({
     }
   },
   methods:{
-    send(){
-      let req = JSON.parse(this.$refs.textarea.value)
+    send(get){
+
+      req = JSON.parse(this.$refs.textarea.value)
+
       channel.req(this.service, this.method, req, function(data){
         self.response = data;
       })
+
     }
   },
   mounted(){

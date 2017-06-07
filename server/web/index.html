@@ -46,10 +46,10 @@
 
         <div class="switch-container">
           <span @click="actionName = 'ДЕРНУТЬ'">Get</span>
-          <span @click="actionName = 'ОБНОВИТЬ'">Update</span>
+          <span @click="actionName = 'СОЗДАТЬ'">Create</span>
         </div>
 
-        <div class="model-tab" v-if="actionName == 'ОБНОВИТЬ'">
+        <div class="model-tab" v-if="actionName == 'СОЗДАТЬ'">
           <div class="model-container">
             <textarea cols=80 rows=20 id="output" ref="textarea" :value="schemaPretty">
             </textarea>

@@ -10,9 +10,8 @@ type User struct {
 }
 
 func (u *User) Test() {
-
-	fmt.Println(u.Data["test"])
-	fmt.Println("Test User")
+	u.Data["server_message"] = "modify data test ok 200"
+	fmt.Println("Test Ok")
 }
 
 func (u *User) Create() {

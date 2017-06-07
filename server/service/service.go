@@ -21,6 +21,7 @@ func init() {
 			"checkToken",
 		},
 		"Page": {
+			"Get",
 			"Create",
 			"Update",
 			"Delete",
