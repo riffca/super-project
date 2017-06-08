@@ -12,7 +12,7 @@ window.Application = new Vue({
 
       services: [],
       methods: [],
-      all: {},
+      actionMap: {},
       actionName: "СОЗДАТЬ",
       jsonSchema: "",
       requestJSON: {},
@@ -56,12 +56,12 @@ window.Application = new Vue({
   watch:{
     method(val){
       if(val=="Create"){
-        let a = this.all[this.service];
+        let a = this.actionMap[this.service];
         this.jsonSchema = JSON.parse(a[a.length-1]);
       }
     },
     service(val){
-      this.methods = this.all[val]
+      this.methods = this.actionMap[val]
     }
   },
   methods:{
@@ -84,7 +84,7 @@ window.Application = new Vue({
     })
 
     channel.on('Get', "Services", function(data){
-      self.all = data
+      self.actionMap = data
       for(k in data){
         self.services.push(k)
       }

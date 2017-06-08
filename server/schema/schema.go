@@ -19,7 +19,7 @@ type Model struct {
 
 func init() {
 
-	db, err := gorm.Open("sqlite3", "data")
+	db, err := gorm.Open("sqlite3", "data.db")
 	db.LogMode(true)
 	defer db.Close()
 
@@ -34,6 +34,7 @@ func init() {
 	Connected = true
 
 	//db.CreateTable(&User{}, &Page{})
+	//db.DropTableIfExists(&User{}, &Page{})
 
 }
 

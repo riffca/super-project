@@ -102,27 +102,31 @@ func echoHandler(session sockjs.Session) {
 
 			json.Unmarshal([]byte(msg), &t)
 
-			log.Println("Request Data: ", t.RequestData)
+			log.Println("RequestData: ", t.RequestData)
 
-			if val := service.CheckMethod(t.Service, t.Method); val == true {
+			if val := service.CheckMethod(t.Service, t.Method); val {
 
-				if t.Service == "Auth" {
+				switch t.Service {
+
+				case "Auth":
 					s := service.Auth{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
-					//modefy request data
+					//modify request data
 					t.RequestData = s.Data
-				}
 
-				if t.Service == "User" {
-					s := service.User{Data: t.RequestData}
-					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
-					t.RequestData = s.Data
-				}
-
-				if t.Service == "Page" {
+				case "Page":
 					s := service.Page{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 					t.RequestData = s.Data
+
+				case "User":
+					s := service.User{Data: t.RequestData}
+					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+					t.RequestData = s.Data
+
+				default:
+					t.RequestData["ERROR"] = "No Server Method founded!"
+
 				}
 
 			}

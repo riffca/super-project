@@ -50,7 +50,7 @@ class Channel {
       console.log("%cПринято<----------- " +
         data.service + " " + data.method,
         "color: darkgreen; font-size: 1.3rem")
-      console.log(data)
+      console.log(JSON.parse(JSON.stringify(data.response_data)))
 
       //jsonPretty = JSON.stringify(data,null,2);
       //document.getElementById("output").value += jsonPretty +"\n";
