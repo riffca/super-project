@@ -1,18 +1,15 @@
 package main
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-
 	schema "./schema"
 	service "./service"
 	"encoding/json"
 	"flag"
 	"fmt"
+	gorm "github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"os"
 	"strings"
-	//gorm "github.com/jinzhu/gorm"
-	//_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	pb "./service/chat/proto"
 	"golang.org/x/net/context"
@@ -84,7 +81,7 @@ func (t *DataScheme) Auth() bool {
 
 func main() {
 
-	db, err := gorm.Open("mysql", "root:@/work?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("sqlite3", "data.db")
 	if err != nil {
 		panic(err)
 	} else {
@@ -93,7 +90,7 @@ func main() {
 	db.LogMode(true)
 	defer db.Close()
 	service.New(db)
-	fmt.Println(schema.DB)
+	db.CreateTable(&schema.Page{})
 
 	//contactChatService()
 	opts := sockjs.DefaultOptions

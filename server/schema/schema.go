@@ -38,9 +38,8 @@ func ConnectDB() *gorm.DB {
 
 	log.Println("connected to database!")
 
-	//db.CreateTable(&Page{})
+	db.CreateTable(&Page{})
 	//db.DropTableIfExists(&User{}, &Page{})
-	db.Create(&Page{Name: "sqwtass", Content: "stas"})
 
 	return db
 

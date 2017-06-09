@@ -60,10 +60,11 @@
         <template v-if="service == 'Page' && method == 'Create'">
           <div class="model-tab">
             <div class="model-container">
-              <label for="methodInput">Method</label>
-              <input v-model="method" id="methodInput" focus="true" />
+              <label for="modelName">Name</label>
+              <input v-model="method" id="pageName" focus="true" />
             </div>
             <div class="model-container">
+              <label for="modelContent">Content</label>
               <textarea cols=80 rows=20 id="output" ref="textarea" :value="schemaPretty">
               </textarea>
             </div>

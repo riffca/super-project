@@ -23,7 +23,7 @@ func (p *Page) Get() {
 	} else {
 		s := []schema.Page{}
 		a := DB.Find(&s)
-		p.Data["service_data"] = a
+		p.Data = a.Value
 	}
 }
 
@@ -31,8 +31,8 @@ func (p *Page) Create() {
 
 	n, c := p.Data["Name"], p.Data["Content"]
 	pa := schema.Page{Name: n.(string), Content: c.(string)}
-
 	page := DB.Create(&pa)
 	p.Data["service_data"] = page
 	fmt.Println(page)
+
 }
