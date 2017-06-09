@@ -1,24 +1,28 @@
 class Channel {
 
   constructor(){
-    this.sock = null;
-    this.reqBox = [];
-    this.eventBox = [];
-    this.connected = false;
+    this.sock = null
+    this.reqBox = []
+    this.eventBox = []
+    this.connected = false
+    this.lastRequest = {}
+    this.lastResponse = {}
+    this.listen = false
     this.init();
+
   }
 
   init(){
+
     // Some browsers (mainly IE) do not have this property, so we need to build it manually...
     if (!window.location.origin) {
       window.location.origin = window.location.protocol + '//' +
       window.location.hostname + (window.location.port ? (':' + window.location.port) : '');
     }
-
-    var origin = window.location.origin;
+    let origin = window.location.origin;
 
     // options usage example
-    var options = {
+    let options = {
         debug: true,
         devel: true,
         transports: [
@@ -30,57 +34,75 @@ class Channel {
         ]
     };
 
-
     let self = this
 
     self.sock = new SockJS(origin+'/echo', undefined, options)
 
-    self.sock.onopen = function() {
+    self.sock.onopen = function(e) {
       self.connected = true
-      console.log('connection open')
+      console.log('%cconnection open', "font-size: 1.7rem")
       document.getElementById("status").innerHTML = "connected"
-      //sendData(null,"User","Test")
-      //self.req("User","Test")
 
     };
 
     self.sock.onmessage = function(e) {
 
+
       let data = JSON.parse(e.data)
-      console.log("%cПринято<----------- " +
-        data.service + " " + data.method,
-        "color: darkgreen; font-size: 1.3rem")
-      console.log(JSON.parse(JSON.stringify(data.response_data)))
 
-      //jsonPretty = JSON.stringify(data,null,2);
-      //document.getElementById("output").value += jsonPretty +"\n";
+      if(data.back.session_id && !window.localStorage.getItem("session_id")){
+        window.localStorage.setItem('session_id', data.back.session_id)
+      }
 
+      self.logMessage(data)
       self.execHandler(data)
 
     };
 
     self.sock.onclose = function() {
+
+      setTimeout(()=>{
+        self.init()
+      },1000)
+
       document.getElementById("status").innerHTML = "connection closed";
-      console.log('connection closed');
+      console.log('%cconnection closed', "font-size: 1.7rem")
     };
 
+  }
+
+  logMessage(data){
+    console.log("%cПринято<----------- \n" +
+      data.service + " " + data.method + (this.listen ? "  %clisten" : "%c"),
+      "color: darkgreen; font-size: 1.4rem", "color: darkred; font-size: 1.1rem" )
+    console.log(data)
+    console.log("%c ResponseData:","color: darkgreen; font-size: 1.2rem")
+    console.log(JSON.parse(JSON.stringify(data.response_data)))
+    this.listen = false
 
   }
+
+  logRequest(request){
+    console.log("%cОтправлено----------> \n " +
+      request.service + " " + request.method,
+      "color: darkblue; font-size: 1.4rem")
+    console.log(request)
+    console.log("%c RequestData:","color: darkblue; font-size: 1.2rem")
+    console.log(request.request_data)
+  }
+
   on(service,method,callback){
 
-    var e = {}
+    let e = {}
     e.event = service + ' ' + method
     e.func = null || callback
     this.eventBox.push(e)
-
-    console.log("%Прослушан----------> " +
-      service + " " + method,
-      "color: darkblue; font-size: 1.3rem")
+    this.listen = true
 
   }
 
   req(service, method, data, callback){
-    var self = this
+    let self = this
     if(!this.connected){
       setTimeout(function(){
         self.req(service, method, data, callback)
@@ -88,24 +110,25 @@ class Channel {
       return;
     }
 
-    var o = {}
+    let o = {}
     o.id = Math.random() + ""
     o.func = null || callback
     this.reqBox.push(o)
 
-    var request = {
+    let request = {
+      back:{},
       map_id: o.id,
       service: service,
       method: method,
       request_data: data || { test_data: "Hello" }
     }
 
+    let id = window.localStorage.getItem('session_id')
+    if(id) request.back.session_id = id
+
     this.sock.send(JSON.stringify(request));
 
-    console.log("%cОтправлено----------> " +
-      request.service + " " + request.method,
-      "color: darkblue; font-size: 1.3rem")
-    console.log(request)
+    this.logRequest(request)
 
   }
 
@@ -127,39 +150,13 @@ class Channel {
 
 }
 
-var channel = new Channel();
+let channel = new Channel();
 
 
 
 
-  // var send = function(data){
-  //   text = document.getElementById("input").value;
-  //   sock.send(document.getElementById("input").value); return false;
-
-  // }
 
 
-  // var sendData = function(event, serviceName, methodName, data) {
-
-  //   if(event)event.preventDefault();
-
-  //   data = {
-  //     service: serviceInput.value,
-  //     method: methodInput.value,
-  //     request_data: {
-  //       test: 666
-  //     }
-  //   } || data
-
-  //   if(serviceName) data.service = serviceName;
-  //   if(methodName) data.method = methodName;
-
-  //   sock.send(JSON.stringify(data));
-
-  //   console.log("%cОтправлено------------->", "color: darkblue; font-size: 1.3rem")
-  //   console.log(JSON.parse(JSON.stringify(data)))
-
-  // }
 
 
 

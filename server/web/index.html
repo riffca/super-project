@@ -44,17 +44,33 @@
 
         <button class="send-button" @click="send">{{ actionName }}</button>
 
-        <div class="switch-container">
+        <div class="switch-container" v-if="false">
           <span @click="actionName = 'ДЕРНУТЬ'">Get</span>
           <span @click="actionName = 'СОЗДАТЬ'">Create</span>
         </div>
 
-        <div class="model-tab" v-if="actionName == 'СОЗДАТЬ'">
+        <div class="model-tab" v-if="service == 'Page' && method == 'Get'">
           <div class="model-container">
             <textarea cols=80 rows=20 id="output" ref="textarea" :value="schemaPretty">
             </textarea>
           </div>
         </div>
+
+
+        <template v-if="service == 'Page' && method == 'Create'">
+          <div class="model-tab">
+            <div class="model-container">
+              <label for="methodInput">Method</label>
+              <input v-model="method" id="methodInput" focus="true" />
+            </div>
+            <div class="model-container">
+              <textarea cols=80 rows=20 id="output" ref="textarea" :value="schemaPretty">
+              </textarea>
+            </div>
+          </div>
+        </template>
+
+
 
         <div class="model-tab" v-if="actionName == 'ДЕРНУТЬ'">
           <div class="model-container">

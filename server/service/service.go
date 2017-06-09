@@ -1,9 +1,22 @@
 package service
 
+/*
+/*Modify data as
+/*t.Data = inteface{}
+/*with every service
+*/
+import "github.com/jinzhu/gorm"
 import "encoding/json"
 import "../schema"
 
 var MethodMap map[string][]string
+
+var DB *gorm.DB
+
+func New(db *gorm.DB) {
+	// Configure any package-level settings
+	DB = db
+}
 
 func init() {
 

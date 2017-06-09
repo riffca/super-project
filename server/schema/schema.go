@@ -1,14 +1,20 @@
 package schema
 
 import (
+	// "github.com/jinzhu/gorm"
+	// _ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 	"time"
 )
 
+const (
+	driver  = "mysql"                                             //"sqlite3"
+	options = "root:@/work?charset=utf8&parseTime=True&loc=Local" //"data.db"
+)
+
 var DB *gorm.DB
-var Connected bool
 
 type Model struct {
 	ID        uint `gorm:"primary_key;AUTO_INCREMENT"`
@@ -17,24 +23,26 @@ type Model struct {
 	DeletedAt *time.Time
 }
 
-func init() {
+func ConnectDB() *gorm.DB {
 
-	db, err := gorm.Open("sqlite3", "data.db")
-	db.LogMode(true)
-	defer db.Close()
+	db, err := gorm.Open("mysql", "root:@/work?charset=utf8&parseTime=True&loc=Local")
 
 	if err != nil {
 		log.Println(err)
-		return
+		//panic(err)
+		return db
 	}
+
+	db.LogMode(true)
+	defer db.Close()
 
 	log.Println("connected to database!")
 
-	DB = db
-	Connected = true
-
-	//db.CreateTable(&User{}, &Page{})
+	//db.CreateTable(&Page{})
 	//db.DropTableIfExists(&User{}, &Page{})
+	db.Create(&Page{Name: "sqwtass", Content: "stas"})
+
+	return db
 
 }
 

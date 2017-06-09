@@ -13,7 +13,7 @@ window.Application = new Vue({
       services: [],
       methods: [],
       actionMap: {},
-      actionName: "СОЗДАТЬ",
+      actionName: "Send",
       jsonSchema: "",
       requestJSON: {},
 
@@ -65,6 +65,7 @@ window.Application = new Vue({
     }
   },
   methods:{
+
     send(get){
 
       req = JSON.parse(this.$refs.textarea.value)
@@ -88,6 +89,10 @@ window.Application = new Vue({
       for(k in data){
         self.services.push(k)
       }
+      self.$nextTick(()=>{
+        self.method = "Get"
+        self.service = "Page"
+      })
     })
   }
 })

@@ -1,6 +1,9 @@
 package main
 
 import (
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+
 	schema "./schema"
 	service "./service"
 	"encoding/json"
@@ -15,6 +18,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	"github.com/satori/go.uuid"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	"log"
 	"net/http"
@@ -22,7 +26,7 @@ import (
 )
 
 const (
-	address     = "localhost:50051"
+	chatHost    = "localhost:50051"
 	defaultName = "world"
 )
 
@@ -34,25 +38,62 @@ func init() {
 	flag.Parse()
 }
 
-type DataSheme struct {
+var sessions []uuid.UUID
+
+type Back struct {
+	SessionId string `json:"session_id"`
+	Auth      bool   `json:"auth"`
+}
+
+type DataScheme struct {
 	Service      string                 `json:"service"`
 	Method       string                 `json:"method"`
 	Token        string                 `json:"token"`
 	MapId        string                 `json:"map_id"`
 	RequestData  map[string]interface{} `json:"request_data"`
 	ResponseData map[string]interface{} `json:"response_data"`
+	Back         Back                   `json:"back"`
 }
 
-func (t *DataSheme) Echo() {
+func (t *DataScheme) Echo() {
 
 	t.ResponseData = t.RequestData
 	t.RequestData = nil
 
 }
 
+func (t *DataScheme) AddSession() {
+	fmt.Println(t.Back.SessionId)
+	fmt.Println(len(t.Back.SessionId))
+	if len(t.Back.SessionId) > 5 {
+
+	} else {
+		ui := uuid.NewV4()
+		t.Back.SessionId = ui.String()
+		fmt.Println("append: ", t.Back.SessionId)
+		sessions = append(sessions, ui)
+	}
+
+	fmt.Println("all sessions: ", sessions)
+}
+
+func (t *DataScheme) Auth() bool {
+	t.Back.Auth = false
+	return t.Back.Auth
+}
+
 func main() {
 
-	log.Println("Database connected:", schema.Connected)
+	db, err := gorm.Open("mysql", "root:@/work?charset=utf8&parseTime=True&loc=Local")
+	if err != nil {
+		panic(err)
+	} else {
+		log.Println("Database connected")
+	}
+	db.LogMode(true)
+	defer db.Close()
+	service.New(db)
+	fmt.Println(schema.DB)
 
 	//contactChatService()
 	opts := sockjs.DefaultOptions
@@ -66,41 +107,24 @@ func main() {
 
 }
 
-//------------------CODE EXAMPLE---------------------------------
-//https://astaxie.gitbooks.io/build-web-application-with-golang/en/03.2.html
-func refreshTables(w http.ResponseWriter, r *http.Request) {
-
-	log.Println(`
-    ---------------------------------------->
-    ------------Http Handle-------------
-    <--------------------------------------->`)
-
-	r.ParseForm()       // parse arguments, you have to call this by yourself
-	fmt.Println(r.Form) // print form information in server side
-	fmt.Println("path", r.URL.Path)
-	fmt.Println("scheme", r.URL.Scheme)
-	fmt.Println(r.Form["url_long"])
-	for k, v := range r.Form {
-		fmt.Println("key:", k)
-		fmt.Println("val:", strings.Join(v, ""))
-	}
-	fmt.Fprintf(w, "<h1>ВСЕ ОК</h1>") // send data to client side
-
-}
-
 func echoHandler(session sockjs.Session) {
 
 	log.Println("new sockjs session established")
 
+	//send list of services
 	session.Send(getServiceMap())
 
 	for {
 
 		if msg, err := session.Recv(); err == nil {
 
-			var t DataSheme
+			var t DataScheme
 
 			json.Unmarshal([]byte(msg), &t)
+
+			t.AddSession()
+
+			t.Auth()
 
 			log.Println("RequestData: ", t.RequestData)
 
@@ -125,7 +149,7 @@ func echoHandler(session sockjs.Session) {
 					t.RequestData = s.Data
 
 				default:
-					t.RequestData["ERROR"] = "No Server Method founded!"
+					t.RequestData["ERROR"] = "No server handler!"
 
 				}
 
@@ -161,7 +185,7 @@ func echoHandler(session sockjs.Session) {
 
 func contactChatService() {
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(chatHost, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -184,13 +208,11 @@ func getServiceMap() string {
 
 	i := make(map[string]interface{})
 
-	log.Println(service.MethodMap)
-
 	for k, v := range service.MethodMap {
 		i[k] = v
 	}
 
-	d := DataSheme{
+	d := DataScheme{
 		Service:      "Get",
 		Method:       "Services",
 		ResponseData: i,
@@ -201,3 +223,31 @@ func getServiceMap() string {
 	return string(r)
 
 }
+
+//---------------------------------------------------
+//------------------CODE EXAMPLE---------------------
+//---------------------------------------------------
+//https://astaxie.gitbooks.io/build-web-application-with-golang/en/03.2.html
+func refreshTables(w http.ResponseWriter, r *http.Request) {
+
+	log.Println(`
+    ---------------------------------------->
+    ------------Http Handle-------------
+    <--------------------------------------->`)
+
+	r.ParseForm()       // parse arguments, you have to call this by yourself
+	fmt.Println(r.Form) // print form information in server side
+	fmt.Println("path", r.URL.Path)
+	fmt.Println("scheme", r.URL.Scheme)
+	fmt.Println(r.Form["url_long"])
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
+	fmt.Fprintf(w, "<h1>ВСЕ ОК</h1>") // send data to client side
+
+}
+
+//---------------------------------------------------
+//---------------------------------------------------
+//---------------------------------------------------

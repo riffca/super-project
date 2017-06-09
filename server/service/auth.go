@@ -12,3 +12,7 @@ type Auth struct {
 func (a *Auth) CheckToken() {
 	fmt.Println("ПРОВЕКА ТОКЕНА " + a.Token)
 }
+
+func (a *Auth) GetToken() {
+	fmt.Println("ПОЛУЧЕН ТОКЕН")
+}
