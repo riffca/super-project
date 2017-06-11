@@ -8,15 +8,23 @@ textarea {
   position: relative;
   display: block;
   margin: 0 auto;
-  width: 500px;
+  width: 400px;
   height: 300px;
   font-size: 1.5rem;
+  display: inline-block;
+  margin-left: 25px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  vertical-align: top;
 }
 
 .app {
 
-  justify-content: center;
+
+
+
 }
+
 
 
 .container {
@@ -27,7 +35,7 @@ textarea {
 }
 
 .container, .response {
-  display: inline-block;
+
 
 }
 
@@ -43,6 +51,7 @@ textarea {
 .model-container {
   display: inline-block;
   font-size: 1.4rem;
+  width: 100%;
 
 }
 
@@ -52,6 +61,18 @@ textarea {
   margin: 5px 10px;
   font-size: 1.4rem;
   padding: 5px;
+}
+
+
+.model-container input {
+  display: inline-block;
+  border: 1px solid darkgreen;
+  width: 400px;
+  height: 50px;
+  margin: 5px 10px;
+  font-size: 1.4rem;
+  padding: 5px;
+  border-radius: 2px;
 }
 
 select  {
@@ -72,22 +93,30 @@ select  {
 
 
 .model-container label {
-  width: 100px;
-  height: 20px;
+  border-radius: 2px;
+  display: inline-block;
+  width: 200px;
+  border: 1px solid darkblue;
+  height: 50px;
+  line-height: 50px;
   margin: 5px 10px;
   cursor: pointer;
 }
 
 .model-tab {
-  height: 400px;
+
 }
 
 .send-button {
+  background: transparent;
+  border-radius: 2px;
+  border: 1px solid darkblue;
   width: 150px;
   font-size: 1.1rem;
   font-weight: lighter;
   margin: 10px;
   padding: 12px;
+  cursor: pointer;
 }
 
 .server-messages {
@@ -104,6 +133,14 @@ select  {
   font-size: 2.5rem;
   cursor: pointer;
   padding: 10px 30px;
+}
+
+.selects-container .model-container {
+
+  display: inline-block;
+  width: 150px;
+
+
 }
 
 

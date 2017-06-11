@@ -40,6 +40,7 @@ var sessions []uuid.UUID
 type Back struct {
 	SessionId string `json:"session_id"`
 	Auth      bool   `json:"auth"`
+	Json      string `json:"json"`
 }
 
 type DataScheme struct {
@@ -87,10 +88,16 @@ func main() {
 	} else {
 		log.Println("Database connected")
 	}
+
 	db.LogMode(true)
 	defer db.Close()
 	service.New(db)
+
 	db.CreateTable(&schema.Page{})
+
+	if false {
+		db.DropTable(&schema.Page{})
+	}
 
 	//contactChatService()
 	opts := sockjs.DefaultOptions
@@ -117,7 +124,9 @@ func echoHandler(session sockjs.Session) {
 
 			var t DataScheme
 
-			json.Unmarshal([]byte(msg), &t)
+			if err := json.Unmarshal([]byte(msg), &t); err != nil {
+				panic(err)
+			}
 
 			t.AddSession()
 

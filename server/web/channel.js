@@ -4,12 +4,11 @@ class Channel {
     this.sock = null
     this.reqBox = []
     this.eventBox = []
+    this.historyBox = []
     this.connected = false
-    this.lastRequest = {}
-    this.lastResponse = {}
     this.listen = false
-    this.init();
-
+    this.init()
+    this.execHistory()
   }
 
   init(){
@@ -49,6 +48,8 @@ class Channel {
 
 
       let data = JSON.parse(e.data)
+      self.parseJsonEmbed(data)
+      console.log(data)
 
       if(data.back.session_id && !window.localStorage.getItem("session_id")){
         window.localStorage.setItem('session_id', data.back.session_id)
@@ -71,6 +72,23 @@ class Channel {
 
   }
 
+  parseJsonEmbed(data){
+    try {
+      data = JSON.parse(data).response_data
+      for(let k in data){
+        let json=data[k].search(/&quot;/) != -1
+        if(json){
+          data[k] = JSON.parse(json.replace(/&quot;/g,""))
+        }
+      }
+    } catch (e) {
+      //json catch use
+      return
+    }
+
+    console.log(data)
+  }
+
   logMessage(data){
     console.log("%cПринято<----------- \n" +
       data.service + " " + data.method + (this.listen ? "  %clisten" : "%c"),
@@ -88,7 +106,15 @@ class Channel {
       "color: darkblue; font-size: 1.4rem")
     console.log(request)
     console.log("%c RequestData:","color: darkblue; font-size: 1.2rem")
-    console.log(request.request_data)
+    console.log(JSON.parse(JSON.stringify(request.request_data)))
+  }
+
+
+  off(callback){
+    this.eventBox = this.eventBox.filter(i=>{
+      return i.callback !== callback
+    })
+
   }
 
   on(service,method,callback){
@@ -102,7 +128,9 @@ class Channel {
   }
 
   req(service, method, data, callback){
+
     let self = this
+
     if(!this.connected){
       setTimeout(function(){
         self.req(service, method, data, callback)
@@ -125,27 +153,35 @@ class Channel {
 
     let id = window.localStorage.getItem('session_id')
     if(id) request.back.session_id = id
+    self.sock.send(JSON.stringify(request))
+    self.logRequest(request)
 
-    this.sock.send(JSON.stringify(request));
-
-    this.logRequest(request)
 
   }
 
-  execHandler(data){
+  execHistory(){
+    if(this.historyBox.length){
+      this.historyBox.forEach(i=>i.func())
+      this.historyBox=[]
+    }
+  }
 
+  execHandler(data){
+    let self = this
     this.eventBox.forEach(function(i){
       if(i.event == (data.service + " " + data.method)){
         i.func(data.response_data)
+        //self.historyBox.push(i)
       }
     })
-
 
     this.reqBox.forEach(function(i){
       if(i.id == data.map_id && i.func){
         i.func(data.response_data)
+        //self.historyBox.push(i)
       }
     })
+
   }
 
 }
