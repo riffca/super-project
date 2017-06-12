@@ -50,7 +50,6 @@ class Channel {
       let data = JSON.parse(e.data)
       self.parseJsonEmbed(data)
       console.log(data)
-
       if(data.back.session_id && !window.localStorage.getItem("session_id")){
         window.localStorage.setItem('session_id', data.back.session_id)
       }

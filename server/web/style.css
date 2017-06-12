@@ -25,7 +25,10 @@ textarea {
 
 }
 
-
+.update-banner {
+  padding: 100px;
+  cursor:pointer;
+}
 
 .container {
   max-width: 1050px;
@@ -110,14 +113,21 @@ select  {
 .send-button {
   background: transparent;
   border-radius: 2px;
-  border: 1px solid darkblue;
+  border: 2px solid darkred;
   width: 150px;
   font-size: 1.1rem;
   font-weight: lighter;
   margin: 10px;
   padding: 12px;
   cursor: pointer;
+  outline: none;
 }
+.send-button.request {
+  background: darkred;
+  color: white;
+  font-size: 1.2rem;
+}
+
 
 .server-messages {
   text-align: left;

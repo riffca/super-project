@@ -6,7 +6,7 @@ type Page struct {
 	Content string
 }
 
-func (u *Page) AfterSave() (err error) {
-	u.Content = `&quot;hello&quot;:&quot;json&quot;`
+func (u *Page) BeforeCreate() (err error) {
+	u.Content = `{&quot;hello&quot;:&quot;json&quot;}`
 	return
 }

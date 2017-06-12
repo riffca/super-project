@@ -7,6 +7,7 @@ import (
 	"strings"
 	//"time"
 	//"encoding/json"
+	"strconv"
 )
 
 type Page struct {
@@ -21,17 +22,15 @@ func (p *Page) Update() {
 
 	n, c := p.Data["Name"], p.Data["Content"]
 
-	page := schema.Page{}
-	DB.Where(&schema.Page{Name: "sta"}).First(&page)
-	DB.Model(&page).Updates(schema.Page{
-		Name:    c.(string),
-		Content: n.(string),
-	})
+	id, _ := strconv.ParseUint(p.Data["ID"].(string), 10, 64)
 
-	page.Content = c.(string)
-	page.Name = n.(string)
-	d := DB.Save(&page)
-	p.Data["service_data"] = d.Value
+	page := schema.Page{}
+	DB.First(&page, id)
+	d := DB.Model(&page).Updates(schema.Page{
+		Name:    n.(string),
+		Content: c.(string),
+	})
+	p.Data["service_data"] = d
 
 }
 

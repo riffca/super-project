@@ -15,7 +15,7 @@
 
     <div class="container">
 
-      <h1>Admin Tester</h1>
+      <h1>Back Test</h1>
 
       <div class="form-container" @keydown.enter="send">
 
@@ -29,12 +29,19 @@
           <div class="model-container">
             <select v-model="method">
               <option disabled value="">Метод</option>
-              <option v-for="method in removeJsonMethods">{{method}}</option>
+              <option v-for="method in methods">{{method}}</option>
             </select>
           </div>
         </div>
 
-        <button class="send-button" @click="send">{{ actionName }}</button>
+        <button class="send-button request" @click="send">{{ actionName }}</button>
+        <button class="send-button" @click="method='Update'" v-if="method=='Get' && singleGetValue">
+          update
+        </button>
+        <span>{{singleGetValue.Name}}</span>
+        <button class="send-button" @click="method='Get'" v-if="method=='Update'">
+          get new
+        </button>
 
 
 <!--         <div class="switch-container" v-if="false">
@@ -44,50 +51,26 @@
 
 
         <template v-if="service == 'Page'">
-
           <!--WRAP CREATE NAMED METHODS-->
           <div class="model-tab">
-            <template v-for="(v,k) of modelBox">
-              <div class="model-container" v-if="!isJson(k)">
-                <label for="modelName">{{k}}</label>
-                <input v-model="modelBox[k]" id="pageName" focus="true" />
-              </div>
-              <div class="model-container" v-if="isJson(k)">
-                <label :for="k+'-id'">{{k}}</label>
-                <textarea cols=80 rows=20 :id="k+'-id'">
-                </textarea>
-              </div>
-            </template>
-          </div>
-
-<!--
-          <div class="model-tab" v-if="method=='Get'">
-            <template v-for="(v,k) of modelBox">
-              <div class="model-container" type="text" v-if="!isJson(k)">
-                <label :for="k+'-id'">{{k}}</label>
-                <input v-model="modelBox[k]" :id="k+'-id'" focus="true" />
-              </div>
-            </template>
-          </div>
-
-          <div class="model-tab" v-if="method=='Update'">
-
-            <template v-for="(v,k) of modelBox">
+            <h1 class="update-banner"
+              v-if="method=='Update' && !singleGetValue"
+              @click="method='Get'">
+              Use {{service}} Get to have one
+            </h1>
+            <template v-for="(v,k) of modelBox" v-else>
               <div class="model-container" v-if="!isJson(k)">
                 <label :for="k+'-id'">{{k}}</label>
                 <input v-model="modelBox[k]" :id="k+'-id'" focus="true" />
               </div>
-              <div class="model-container" v-if="isJson(k)">
+              <div class="model-container" v-if="isJson(k) && method!='Get'">
                 <label :for="k+'-id'">{{k}}</label>
-                <textarea cols=80 rows=20 :id="k+'-id'">
+                <textarea cols=80 rows=20 :id="k+'-id'" id="json-content" @keydown.enter.stop>
                 </textarea>
               </div>
             </template>
-
-          </div> -->
-
+          </div>
         </template>
-
 
 <!--         <div>
           <div class="add-block">+</div>
@@ -104,7 +87,7 @@
 
       <h1>Response Data</h1>
 
-      <div class="server-messages">
+      <div class="server-messages" :class="{'last-response': true}">
         <pre>{{response}}</pre>
       </div>
 

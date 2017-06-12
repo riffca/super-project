@@ -16,3 +16,11 @@ func (a *Auth) CheckToken() {
 func (a *Auth) GetToken() {
 	fmt.Println("ПОЛУЧЕН ТОКЕН")
 }
+
+func (a *Auth) SignUp() {
+
+}
+
+func (a *Auth) SignIn() {
+
+}

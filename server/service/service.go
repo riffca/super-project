@@ -20,18 +20,24 @@ func New(db *gorm.DB) {
 
 func init() {
 
+	type Default struct {
+		Schema string
+	}
+
 	u, _ := json.Marshal(&schema.User{})
-	p, _ := json.Marshal(&schema.Page{})
+	p, _ := json.Marshal(&schema.Page{Content: "{&quot;json&quot;:&quot;default&quot;}"})
+	d, _ := json.Marshal(&Default{Schema: "none"})
 
 	//Превратить в interface
 	MethodMap = map[string][]string{
 		"User": {
 			"Test",
-			"Go",
 			string(u),
 		},
 		"Auth": {
-			"checkToken",
+			"SignUp",
+			"SignIn",
+			string(d),
 		},
 		"Page": {
 			"Get",

@@ -15,61 +15,81 @@ window.Application = new Vue({
 
       services: [],
       methods: [],
-      actionMap: {},
+      serviceMap: {},
 
       //btn-app
       actionName: "Send",
 
       jsonSchema: "",
-      requestJSON: {},
       request: {},
       modelBox: {},
       updateAction: false,
 
+
+      singleGetValue: ""
+
     }
   },
-
   computed:{
-    //modelSchema-app
-    removeJsonMethods(){
-      let m = []
-      this.methods.forEach(i=>{
-        m.push(i)
-      })
-      try {
-        JSON.parse(this.methods[this.methods.length-1])
-        m.pop()
-      } catch (e){
-        return m
+    jsonFieldKey(){
+      let v = ""
+      let j = this.jsonSchema
+      for(let k in j){
+        if(typeof j[k] == 'string' && j[k].search(/&quot;/)!= -1){
+          v=k
+        }
       }
-      return m;
-    }
+      return v;
+    },
   },
-
   watch:{
 
     //Select service amd method
     method(val){
       switch(val){
         case "Create":
-          this.modelBox=removeFields(this.jsonSchema,"ID")
+          this.modelBox=removeFields(this.jsonSchema,'ID')
           this.$nextTick(()=>{
-            // let e = document.getElementById('json-content');
-            // if(e)e.textContent='{"Зоголовок":"Текст"}'
+            let e = document.getElementById('json-content')
+            if(e)e.textContent='{"Зоголовок":"Текст"}'
           })
+        break;
         case "Get":
-          this.modelBox=removeFields(this.jsonSchema)
+          this.modelBox=removeFields(this.jsonSchema,this.jsonFieldKey)
           this.modelBox.ID=''
+        break;
+        case "Update":
+          if(this.singleGetValue){
+            this.updateTextarea()
+          }
       }
     },
     service(val){
-      let a = this.methods = this.actionMap[val];
-      this.jsonSchema = JSON.parse(a[a.length-1]);
+      let map = this.serviceMap[val];
+      let last = map.length-1
+      this.jsonSchema = JSON.parse(map[last]);
+      this.methods = map.filter((i,index)=>{
+        return index != last
+      })
+      this.method = this.serviceMap[val][0]
     }
   },
 
 
   methods:{
+    updateTextarea(){
+      this.modelBox = removeFields(this.singleGetValue,"ID")
+      this.$nextTick(()=>{
+        let e = document.getElementById('json-content');
+        if(e) {
+          e.textContent=JSON.stringify(
+          JSON.parse((this.modelBox[this.jsonFieldKey])
+          .replace(/&quot;/g,'"')),null,2
+          ) + '\n'
+        }
+      })
+    },
+
     schemaPretty(val){
       return JSON.stringify(val,null,2) + '\n';
     },
@@ -78,7 +98,7 @@ window.Application = new Vue({
       if(typeof val=="object"){
         let a
         for(let k in val){
-          if(val[k].search(/&quot;/)>=0) a=k
+          if(val[k]+"".search(/&quot;/)>=0) a=k
         }
         return a
       } else {
@@ -98,7 +118,7 @@ window.Application = new Vue({
         return
       }
       let req=this.modelBox
-      if(json) req[this.isJson(this.modelBox)]=json
+      if(json) req[this.jsonFieldKey]=json
       for(let k in req){
         switch(typeof req[k]){
           case "number":req[k]=''+req[k];
@@ -112,19 +132,30 @@ window.Application = new Vue({
         }
       }
 
+      if(this.method=="Update"){
+        req.ID=this.singleGetValue.ID+""
+      }
+
       channel.req(this.service, this.method, req, function(data){
+
         self.response = data;
-        self.modelBox = data.Value
-        let json = self.isJson(self.modelBox)
-        if(json) {
-          self.showJsonInput = true
-          this.$nextTick(()=>{
-            let e = document.getElementById('json-content');
-            e.textContent = self.modelBox[json]
-          })
+
+        let last = data.service_data;
+
+        if(self.method=="Get" && last.Error == null){
+          if(typeof last != "array"){
+            self.singleGetValue=last.Value
+          }
         }
+        if(self.method=="Update" && last.Error == null){
+          self.singleGetValue=last.Value
+          self.updateTextarea()
+        }
+
       })
+
     }
+
   },
   mounted(){
     var self = this
@@ -133,7 +164,7 @@ window.Application = new Vue({
     })
 
     channel.on('Get', "Services", function(data){
-      self.actionMap = data
+      self.serviceMap = data
       for(k in data){
         self.services.push(k)
       }
@@ -148,24 +179,23 @@ window.Application = new Vue({
 })
 
 
-function removeFields(jsonSchema,key){
+function removeFields(jsonSchema,option){
+  option = option || ''
   let val = {}
 
   for(k in jsonSchema){
     if(k=='CreatedAt'
       ||k=='UpdatedAt'
-      ||k=='DeletedAt'){
-      continue
-    }
-    if(key && k==key){
+      ||k=='DeletedAt'
+      ||k==option){
       continue
     }
     val[k]=jsonSchema[k]
   }
-  console.log(val)
   return val
 
 }
+
 
 
 
