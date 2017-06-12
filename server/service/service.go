@@ -13,7 +13,7 @@ var MethodMap map[string][]string
 
 var DB *gorm.DB
 
-func New(db *gorm.DB) {
+func InitDB(db *gorm.DB) {
 	// Configure any package-level settings
 	DB = db
 }

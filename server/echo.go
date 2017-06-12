@@ -39,7 +39,7 @@ var sessions []uuid.UUID
 
 var DB *gorm.DB
 
-func getDB(db *gorm.DB) {
+func InitDB(db *gorm.DB) {
 	DB = db
 }
 
@@ -106,8 +106,8 @@ func main() {
 	db.LogMode(true)
 	defer db.Close()
 
-	service.New(db)
-	getDB(db)
+	service.InitDB(db)
+	InitDB(db)
 
 	db.CreateTable(&schema.Page{}, &schema.User{})
 
