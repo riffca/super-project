@@ -12,7 +12,7 @@ window.Application = new Vue({
       service: "",
       method: "",
       selected: "",
-
+      fullEditor: false,
       services: [],
       methods: [],
       serviceMap: {},
@@ -45,8 +45,30 @@ window.Application = new Vue({
   watch:{
 
     //Select service amd method
-    method(val){
-      switch(val){
+    method(){
+      this.setModelBox()
+    },
+    service(val){
+      let map = this.serviceMap[val];
+      let last = map.length-1
+      this.jsonSchema = JSON.parse(map[last]);
+      this.methods = map.filter((i,index)=>{
+        return index != last
+      })
+      this.method = this.serviceMap[val][0]
+      this.singleGetValue=""
+      this.setModelBox()
+
+    }
+  },
+
+
+  methods:{
+    refreshTables(){
+      channel.req("Data", "DumpTables")
+    },
+    setModelBox(){
+      switch(this.method){
         case "Create":
           this.modelBox=removeFields(this.jsonSchema,'ID')
           this.$nextTick(()=>{
@@ -63,20 +85,9 @@ window.Application = new Vue({
             this.updateTextarea()
           }
       }
+
     },
-    service(val){
-      let map = this.serviceMap[val];
-      let last = map.length-1
-      this.jsonSchema = JSON.parse(map[last]);
-      this.methods = map.filter((i,index)=>{
-        return index != last
-      })
-      this.method = this.serviceMap[val][0]
-    }
-  },
 
-
-  methods:{
     updateTextarea(){
       this.modelBox = removeFields(this.singleGetValue,"ID")
       this.$nextTick(()=>{
@@ -158,12 +169,9 @@ window.Application = new Vue({
 
   },
   mounted(){
-    var self = this
-    channel.req('User', "Test", null , function(data){
-      self.response = data;
-    })
-
+    let self = this
     channel.on('Get', "Services", function(data){
+      self.response = data;
       self.serviceMap = data
       for(k in data){
         self.services.push(k)
@@ -173,7 +181,6 @@ window.Application = new Vue({
         self.method = "Create"
         self.service = "Page"
       })
-
     })
   }
 })

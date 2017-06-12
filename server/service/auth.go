@@ -10,17 +10,19 @@ type Auth struct {
 }
 
 func (a *Auth) CheckToken() {
+
 	fmt.Println("ПРОВЕКА ТОКЕНА " + a.Token)
-}
-
-func (a *Auth) GetToken() {
-	fmt.Println("ПОЛУЧЕН ТОКЕН")
-}
-
-func (a *Auth) SignUp() {
 
 }
 
-func (a *Auth) SignIn() {
+func (a *Auth) Register() {
+
+}
+
+func (a *Auth) Login() {
+
+}
+
+func (a *Auth) Logout() {
 
 }

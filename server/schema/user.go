@@ -2,6 +2,6 @@ package schema
 
 type User struct {
 	Model
-	Name  string
-	Leads []Lead
+	UserName string
+	Email    string `gorm:"unique"`
 }

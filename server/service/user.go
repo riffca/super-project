@@ -2,22 +2,71 @@ package service
 
 import (
 	schema "../schema"
-	"fmt"
+	"strconv"
+	"strings"
 )
 
 type User struct {
-	Data map[string]interface{}
+	Data     map[string]interface{}
+	active   interface{}
+	current  string
+	searchID string
+	model    *schema.User
 }
 
-func (u *User) Test() {
-	u.Data["server_message"] = "modify data test ok 200"
-	fmt.Println("Test Ok")
+func (p *User) Update() {
+
+	un, em := p.Data["UserName"], p.Data["Email"]
+
+	id, _ := strconv.ParseUint(p.searchID, 10, 64)
+
+	user := schema.User{}
+	DB.First(&user, id)
+	d := DB.Model(&user).Updates(schema.User{
+		UserName: un.(string),
+		Email:    em.(string),
+	})
+
+	p.Data["service_data"] = d
+
+}
+
+func (p *User) Get() {
+	p.model = &schema.User{}
+	p.searchID = p.Data["ID"].(string)
+	username := p.Data["UserName"].(string)
+	email := p.Data["Email"].(string)
+
+	if len(username) > 0 {
+		p.active, p.current = username, "user_name"
+	}
+
+	if len(email) > 0 {
+		p.active, p.current = email, "email"
+	}
+
+	if len(p.searchID) > 0 {
+		p.active, p.current = p.searchID, "id"
+	}
+
+	if len(p.current) > 0 {
+		m := []string{p.current, " = ?"}
+		d := DB.Where(strings.Join(m, ""), p.active).First(p.model)
+		p.Data["service_data"] = d
+
+		return
+
+	}
+
+	s := []schema.User{}
+	a := DB.Find(&s)
+	p.Data["service_data"] = a
+
 }
 
 func (u *User) Create() {
-
-}
-
-func (p *User) GetScheme() schema.User {
-	return schema.User{}
+	n, e := u.Data["UserName"], u.Data["Email"]
+	pa := schema.User{UserName: n.(string), Email: e.(string)}
+	page := DB.Create(&pa)
+	u.Data["service_data"] = page
 }

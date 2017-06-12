@@ -18,6 +18,23 @@ textarea {
   vertical-align: top;
 }
 
+textarea.fixed {
+  position: fixed;
+  top:0;
+  left:0;
+  width: 80%;
+  height: 80%;
+}
+.drop-tables-button {
+  cursor: pointer;
+  background: darkred;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 1.3rem;
+
+
+}
 .app {
 
 
@@ -76,6 +93,15 @@ textarea {
   font-size: 1.4rem;
   padding: 5px;
   border-radius: 2px;
+}
+
+.model-container .full-editor{
+  position: fixed;
+  display: inline-block;
+  font-size: 2rem;
+  top: 50px;
+  right: 200px;
+  cursor: pointer;
 }
 
 select  {

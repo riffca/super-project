@@ -37,6 +37,12 @@ func init() {
 
 var sessions []uuid.UUID
 
+var DB *gorm.DB
+
+func getDB(db *gorm.DB) {
+	DB = db
+}
+
 type Back struct {
 	SessionId string `json:"session_id"`
 	Auth      bool   `json:"auth"`
@@ -51,6 +57,14 @@ type DataScheme struct {
 	RequestData  map[string]interface{} `json:"request_data"`
 	ResponseData map[string]interface{} `json:"response_data"`
 	Back         Back                   `json:"back"`
+	DB           *gorm.DB
+}
+
+func (t *DataScheme) DumpTables() {
+	log.Println("Dump Tables")
+	DB.DropTable(&schema.User{}, &schema.Page{})
+	DB.CreateTable(&schema.User{}, &schema.Page{})
+
 }
 
 func (t *DataScheme) Echo() {
@@ -91,13 +105,11 @@ func main() {
 
 	db.LogMode(true)
 	defer db.Close()
+
 	service.New(db)
+	getDB(db)
 
-	db.CreateTable(&schema.Page{})
-
-	if false {
-		db.DropTable(&schema.Page{})
-	}
+	db.CreateTable(&schema.Page{}, &schema.User{})
 
 	//contactChatService()
 	opts := sockjs.DefaultOptions
@@ -154,6 +166,8 @@ func echoHandler(session sockjs.Session) {
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 					t.RequestData = s.Data
 
+				case "Data":
+					t.DumpTables()
 				default:
 					t.RequestData["ERROR"] = "No server handler!"
 

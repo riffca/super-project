@@ -31,12 +31,16 @@ func init() {
 	//Превратить в interface
 	MethodMap = map[string][]string{
 		"User": {
-			"Test",
+			"Get",
+			"Create",
+			"Update",
+			"Delete",
 			string(u),
 		},
 		"Auth": {
-			"SignUp",
-			"SignIn",
+			"Register",
+			"Login",
+			"Logout",
 			string(d),
 		},
 		"Page": {
@@ -45,6 +49,10 @@ func init() {
 			"Update",
 			"Delete",
 			string(p),
+		},
+		"Data": {
+			"DumpTables",
+			string(d),
 		},
 	}
 }
