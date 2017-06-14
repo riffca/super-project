@@ -14,34 +14,31 @@ var MethodMap map[string][]string
 var DB *gorm.DB
 
 func InitDB(db *gorm.DB) {
-	// Configure any package-level settings
 	DB = db
 }
 
 func init() {
 
-	type Default struct {
+	type None struct {
 		Schema string
 	}
 
+	none, _ := json.Marshal(&None{Schema: "None"})
 	u, _ := json.Marshal(&schema.User{})
 	p, _ := json.Marshal(&schema.Page{Content: "{&quot;json&quot;:&quot;default&quot;}"})
-	d, _ := json.Marshal(&Default{Schema: "none"})
+	l, _ := json.Marshal(&schema.Lead{})
+	m, _ := json.Marshal(&schema.Message{})
 
 	//Превратить в interface
 	MethodMap = map[string][]string{
+
+		//schema services
 		"User": {
 			"Get",
 			"Create",
 			"Update",
 			"Delete",
 			string(u),
-		},
-		"Auth": {
-			"Register",
-			"Login",
-			"Logout",
-			string(d),
 		},
 		"Page": {
 			"Get",
@@ -50,9 +47,27 @@ func init() {
 			"Delete",
 			string(p),
 		},
+		"Lead": {
+			"Get",
+			"Create",
+			"Update",
+			"Delete",
+			string(l),
+		},
+		"Message": {
+			"Create",
+			string(m),
+		},
+		//app services
+		"Auth": {
+			"Register",
+			"Login",
+			"Logout",
+			string(none),
+		},
 		"Data": {
 			"DumpTables",
-			string(d),
+			string(none),
 		},
 	}
 }

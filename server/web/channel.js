@@ -55,6 +55,7 @@ class Channel {
       }
 
       self.logMessage(data)
+      //as server need more fresh user data.service_data
       self.execHandler(data)
 
     };

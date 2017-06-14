@@ -69,3 +69,62 @@ func (p *Page) Create() {
 	page := DB.Create(&pa)
 	p.Data["service_data"] = page
 }
+
+var UseJsonSchemesToInputs string = `
+
+{
+  "schema": {
+    "name": {
+      title: 'Name',
+      type: 'string'
+    },
+    "nick": {
+      title: 'Nick name',
+      type: 'string'
+    },
+    "title": {
+      title: 'Title',
+      type: 'string'
+    },
+    "tags": {
+      title: 'Tags',
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      "default": ["abc", "def"]
+    },
+  },
+  "customFormItems": {
+    "name": {
+      "type": "text",
+      "autocomplete": {
+        "source": ['abc', 'bed', 'bee', 'dog', 'cat']
+      }
+    },
+    "nick": {
+      "type": "text",
+      "typeahead": {
+        "source": ['abc', 'bed', 'bee', 'dog', 'cat']
+      }
+    },
+    "title": {
+      "type": "text",
+      "tagsinput": {
+        "typeahead": {
+          "source": ['abc', 'bed', 'bee', 'dog', 'cat']
+        }
+      }
+    },
+    "tags": {
+      "type": "tagsinput",
+      "tagsinput": {
+        "typeahead": {
+          "source": ['abc', 'bed', 'bee', 'dog', 'cat']
+        }
+      }
+    }
+  }
+}
+
+`

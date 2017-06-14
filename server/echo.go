@@ -61,14 +61,24 @@ type DataScheme struct {
 }
 
 func (t *DataScheme) DumpTables() {
+
 	log.Println("Dump Tables")
-	DB.DropTable(&schema.User{}, &schema.Page{})
-	DB.CreateTable(&schema.User{}, &schema.Page{})
+
+	DB.DropTable(
+		&schema.Page{},
+		&schema.User{},
+		&schema.Lead{},
+		&schema.Message{})
+	DB.CreateTable(
+		&schema.Page{},
+		&schema.User{},
+		&schema.Lead{},
+		&schema.Message{})
 
 }
 
 func (t *DataScheme) Echo() {
-
+	//needConvert()
 	t.ResponseData = t.RequestData
 	t.RequestData = nil
 
@@ -95,23 +105,24 @@ func (t *DataScheme) Auth() bool {
 }
 
 func main() {
-
 	db, err := gorm.Open("sqlite3", "data.db")
 	if err != nil {
 		panic(err)
 	} else {
 		log.Println("Database connected")
 	}
-
 	db.LogMode(true)
 	defer db.Close()
-
 	service.InitDB(db)
 	InitDB(db)
-
-	db.CreateTable(&schema.Page{}, &schema.User{})
+	db.CreateTable(
+		&schema.Page{},
+		&schema.User{},
+		&schema.Lead{},
+		&schema.Message{})
 
 	//contactChatService()
+
 	opts := sockjs.DefaultOptions
 	opts.Websocket = *websocket
 	handler := sockjs.NewHandler("/echo", opts, echoHandler)
@@ -155,17 +166,18 @@ func echoHandler(session sockjs.Session) {
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 					//modify request data
 					t.RequestData = s.Data
-
 				case "Page":
 					s := service.Page{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 					t.RequestData = s.Data
-
 				case "User":
 					s := service.User{Data: t.RequestData}
 					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
 					t.RequestData = s.Data
-
+				case "Lead":
+					s := service.Lead{Data: t.RequestData}
+					reflect.ValueOf(&s).MethodByName(t.Method).Call([]reflect.Value{})
+					t.RequestData = s.Data
 				case "Data":
 					t.DumpTables()
 				default:
@@ -190,18 +202,6 @@ func echoHandler(session sockjs.Session) {
 	log.Println("sockjs session closed")
 
 }
-
-// func activateAction(serviceName string, method string) {
-
-//  fmt.Println(&service.Service)
-
-//  r := reflect.ValueOf(&service.Service)
-
-//  f := reflect.Indirect(r).FieldByName(serviceName)
-
-//  reflect.ValueOf(&f).MethodByName(method).Call([]reflect.Value{})
-
-// }
 
 func contactChatService() {
 	// Set up a connection to the server.
@@ -271,3 +271,17 @@ func refreshTables(w http.ResponseWriter, r *http.Request) {
 //---------------------------------------------------
 //---------------------------------------------------
 //---------------------------------------------------
+
+func needConvert(s interface{}) map[string]interface{} {
+
+	inter := make(map[string]interface{})
+
+	v := reflect.ValueOf(&s).Elem()
+
+	for i := 0; i < v.NumField(); i++ {
+		inter[v.Type().Field(i).Name] = v.Field(i).Interface()
+	}
+
+	return inter
+
+}

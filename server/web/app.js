@@ -3,7 +3,6 @@ Vue.config.errorHandler = function (e) {
   console.log(e)
 }
 
-
 window.Application = new Vue({
   el: '#app',
   data(){
@@ -68,19 +67,29 @@ window.Application = new Vue({
       channel.req("Data", "DumpTables")
     },
     setModelBox(){
+      let fields = [
+        'CreatedAt',
+        'UpdatedAt',
+        'DeletedAt',
+        "Leads",
+        "Messages",
+        'Members'
+      ];
+      this.fields = fields;
       switch(this.method){
         case "Create":
-          this.modelBox=removeFields(this.jsonSchema,'ID')
-          this.$nextTick(()=>{
-            let e = document.getElementById('json-content')
-            if(e)e.textContent='{"Зоголовок":"Текст"}'
-          })
+          fields.push('ID')
+          this.modelBox=removeFields(this.jsonSchema,fields)
+          this.updateTextarea()
         break;
         case "Get":
-          this.modelBox=removeFields(this.jsonSchema,this.jsonFieldKey)
+          fields.push('Password')
+          this.modelBox=removeFields(this.jsonSchema,fields)
           this.modelBox.ID=''
         break;
         case "Update":
+          fields.push('ID')
+
           if(this.singleGetValue){
             this.updateTextarea()
           }
@@ -89,7 +98,16 @@ window.Application = new Vue({
     },
 
     updateTextarea(){
-      this.modelBox = removeFields(this.singleGetValue,"ID")
+      let fields = [
+        'CreatedAt',
+        'UpdatedAt',
+        'DeletedAt',
+        "Leads",
+        "Messages",
+        'Members'
+      ];
+      fields.push('ID')
+      this.modelBox=removeFields(this.jsonSchema,fields)
       this.$nextTick(()=>{
         let e = document.getElementById('json-content');
         if(e) {
@@ -160,8 +178,12 @@ window.Application = new Vue({
         }
         if(self.method=="Update" && last.Error == null){
           self.singleGetValue=last.Value
-          self.updateTextarea()
+          self.setModelBox()
         }
+        // if(self.method=="Create" && last.Error == null){
+        //   self.singleGetValue=last.Value
+        //   self.setModelBox()
+        // }
 
       })
 
@@ -173,6 +195,7 @@ window.Application = new Vue({
     channel.on('Get', "Services", function(data){
       self.response = data;
       self.serviceMap = data
+
       for(k in data){
         self.services.push(k)
       }
@@ -186,21 +209,16 @@ window.Application = new Vue({
 })
 
 
-function removeFields(jsonSchema,option){
-  option = option || ''
-  let val = {}
-
+function removeFields(jsonSchema,options){
+  options = options || []
+  val={}
   for(k in jsonSchema){
-    if(k=='CreatedAt'
-      ||k=='UpdatedAt'
-      ||k=='DeletedAt'
-      ||k==option){
+    if(options.indexOf(k)!=-1){
       continue
     }
     val[k]=jsonSchema[k]
   }
   return val
-
 }
 
 

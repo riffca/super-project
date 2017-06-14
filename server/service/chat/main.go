@@ -1,4 +1,4 @@
-package main
+package chat_service
 
 import (
 	"log"
@@ -20,6 +20,13 @@ type server struct{}
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	return &pb.HelloReply{Message: "Hello " + in.Name}, nil
+}
+
+var DB *gorm.DB
+
+func InitDB(db *gorm.DB) {
+	// Configure any package-level settings
+	DB = db
 }
 
 func main() {

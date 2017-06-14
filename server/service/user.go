@@ -14,20 +14,22 @@ type User struct {
 	model    *schema.User
 }
 
-func (p *User) Update() {
+func (u *User) Update() {
 
-	un, em := p.Data["UserName"], p.Data["Email"]
+	un, em := u.Data["UserName"], u.Data["Email"]
+	pw := u.Data["Password"]
 
-	id, _ := strconv.ParseUint(p.searchID, 10, 64)
+	id, _ := strconv.ParseUint(u.searchID, 10, 64)
 
 	user := schema.User{}
 	DB.First(&user, id)
 	d := DB.Model(&user).Updates(schema.User{
 		UserName: un.(string),
 		Email:    em.(string),
+		Password: pw.(string),
 	})
 
-	p.Data["service_data"] = d
+	u.Data["service_data"] = d
 
 }
 
@@ -66,7 +68,13 @@ func (p *User) Get() {
 
 func (u *User) Create() {
 	n, e := u.Data["UserName"], u.Data["Email"]
-	pa := schema.User{UserName: n.(string), Email: e.(string)}
+	pw := u.Data["Password"]
+
+	pa := schema.User{
+		UserName: n.(string),
+		Email:    e.(string),
+		Password: pw.(string),
+	}
 	page := DB.Create(&pa)
 	u.Data["service_data"] = page
 }
