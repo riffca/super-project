@@ -67,47 +67,24 @@ window.Application = new Vue({
       channel.req("Data", "DumpTables")
     },
     setModelBox(){
-      let fields = [
-        'CreatedAt',
-        'UpdatedAt',
-        'DeletedAt',
-        "Leads",
-        "Messages",
-        'Members'
-      ];
-      this.fields = fields;
       switch(this.method){
         case "Create":
-          fields.push('ID')
-          this.modelBox=removeFields(this.jsonSchema,fields)
+          this.modelBox=removeFields(this.jsonSchema,['ID'])
           this.updateTextarea()
         break;
         case "Get":
-          fields.push('Password')
-          this.modelBox=removeFields(this.jsonSchema,fields)
+          this.modelBox=removeFields(this.jsonSchema,['Password'])
           this.modelBox.ID=''
         break;
         case "Update":
-          fields.push('ID')
-
           if(this.singleGetValue){
             this.updateTextarea()
           }
       }
-
     },
 
     updateTextarea(){
-      let fields = [
-        'CreatedAt',
-        'UpdatedAt',
-        'DeletedAt',
-        "Leads",
-        "Messages",
-        'Members'
-      ];
-      fields.push('ID')
-      this.modelBox=removeFields(this.jsonSchema,fields)
+      this.modelBox=removeFields(this.jsonSchema, ['ID'])
       this.$nextTick(()=>{
         let e = document.getElementById('json-content');
         if(e) {
@@ -211,7 +188,15 @@ window.Application = new Vue({
 
 function removeFields(jsonSchema,options){
   options = options || []
-  val={}
+  let arr = [
+    "CreatedAt",
+    "DeletedAt",
+    "UpdatedAt",
+    "Messages",
+    "Users",
+    "Leads"
+  ]
+  options = arr.concat(options)
   for(k in jsonSchema){
     if(options.indexOf(k)!=-1){
       continue

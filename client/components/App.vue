@@ -37,6 +37,7 @@ body {
                Ubuntu,
                'segoe ui', arial,
                sans-serif;
+  height: 100%;
 }
 .page {
   text-align: center;
@@ -46,5 +47,9 @@ body {
     padding: 3px 5px;
     border-radius: 2px;
   }
+}
+
+#app {
+  height: 100%;
 }
 </style>

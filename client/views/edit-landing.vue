@@ -55,9 +55,6 @@ export default {
 
 <style lang="postcss">
 
-body, html, #app {
-  height: 80%;
-}
 
 #edit-landing {
 
