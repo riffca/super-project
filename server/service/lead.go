@@ -2,7 +2,7 @@ package service
 
 import (
 	"../schema"
-	// "strconv"
+	"strconv"
 	// "strings"
 )
 
@@ -23,12 +23,26 @@ type Lead struct {
 // }
 
 func (lead *Lead) Create() {
-	ui, sc := lead.Data["UserId"], lead.Data["StatusCode"]
 
-	u := schema.User{Model{ID: 1}}
-	l := schema.Lead{StatusCode: sc.(uint)}
-	mod := DB.Create(&l).Related(&schema.User{}, ui.(string))
+	ucb := schema.User{}
+	ucb.ID, _ = strconv.ParseUint(lead.Data["CreatedBy"].(string), 10, 64)
+	uad := schema.User{}
+	uad.ID, _ = strconv.ParseUint(lead.Data["Adress"].(string), 10, 64)
+	code, _ := strconv.ParseUint(lead.Data["StatusCode"].(string), 10, 64)
+
+	l := schema.Lead{
+		StatusCode: code,
+		CreatedBy:  ucb,
+		Adress:     uad,
+	}
+	//DB.First(&u, cb.(string))
+
+	//mod := DB.Create(&l)
+
+	mod := DB.Model(&ucb).Association("Leads").Append(&l)
+
 	lead.Data["service_data"] = mod
+
 }
 
 // func (sc *Lead) Update() {

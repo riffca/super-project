@@ -3,6 +3,10 @@ Vue.config.errorHandler = function (e) {
   console.log(e)
 }
 
+
+let authUserID = "1"
+let foreignUserID = "2"
+
 window.Application = new Vue({
   el: '#app',
   data(){
@@ -63,6 +67,15 @@ window.Application = new Vue({
 
 
   methods:{
+    isNumber(k){
+      let opt = [
+      'CreatedBy',
+      'Adress',
+      'StatusCode',
+      'ID'
+      ]
+      return opt.indexOf(k)!=-1
+    },
     refreshTables(){
       channel.req("Data", "DumpTables")
     },
@@ -70,6 +83,12 @@ window.Application = new Vue({
       switch(this.method){
         case "Create":
           this.modelBox=removeFields(this.jsonSchema,['ID'])
+          switch (this.service){
+            case "Lead":
+              this.modelBox['UserId'] = authUserID
+              this.modelBox['Adress'] = foreignUserID
+          }
+
           this.updateTextarea()
         break;
         case "Get":
@@ -81,6 +100,13 @@ window.Application = new Vue({
             this.updateTextarea()
           }
       }
+
+      this.$nextTick(()=>{
+        this.$refs.input.forEach(i=>{
+          let v = i.getAttribute("data-type")
+          i.setAttribute('type',v)
+        })
+      })
     },
 
     updateTextarea(){
@@ -127,14 +153,14 @@ window.Application = new Vue({
       if(json) req[this.jsonFieldKey]=json
       for(let k in req){
         switch(typeof req[k]){
-          case "number":req[k]=''+req[k];
-          case "string":;
-          break;
           case "array":
             req[k] = JSON.stringify(req[k]).replace(/\"/g,'&quot;');
           break;
           case "object":
             req[k] = JSON.stringify(req[k]).replace(/\"/g,'&quot;');
+        }
+        if(this.isNumber(k)){
+          req[k]+=""
         }
       }
 
@@ -186,7 +212,9 @@ window.Application = new Vue({
 })
 
 
+
 function removeFields(jsonSchema,options){
+  let val = {}
   options = options || []
   let arr = [
     "CreatedAt",
@@ -194,7 +222,8 @@ function removeFields(jsonSchema,options){
     "UpdatedAt",
     "Messages",
     "Users",
-    "Leads"
+    "Leads",
+    "Members",
   ]
   options = arr.concat(options)
   for(k in jsonSchema){

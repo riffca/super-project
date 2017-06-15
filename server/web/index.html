@@ -61,14 +61,13 @@
             <template v-for="(v,k) of modelBox" v-else>
               <div class="model-container" v-if="!isJson(k)">
                 <label :for="k+'-id'">{{k}}</label>
-                <input v-model="modelBox[k]" :id="k+'-id'" focus="true" />
+                <input ref="input" :data-type="isNumber(k)?'number':'text'" type="" v-model="modelBox[k]" :id="k+'-id'" focus="true" />
               </div>
               <div class="model-container" v-if="isJson(k) && method!='Get'">
                 <label :for="k+'-id'" @click="fullEditor=true">{{k}}</label>
                 <textarea cols=80 rows=20 :id="k+'-id'" :class="{'fixed':fullEditor}" id="json-content" @keydown.enter.stop>
                 </textarea>
                 <span class="full-editor" v-if="fullEditor" @click="fullEditor=false">X</span>
-
               </div>
             </template>
           </div>

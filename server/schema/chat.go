@@ -4,13 +4,14 @@ type Lead struct {
 	Model
 	Members    []User `gorm:"many2many:user_leads;"`
 	Messages   []Message
-	Adress     User
-	StatusCode uint
+	CreatedBy  User `gorm:"unique"`
+	Adress     User `gorm:"unique"`
+	StatusCode uint64
 }
 
 type Message struct {
 	Model
 	Text   string
-	LeadId uint
+	LeadId uint64
 	Sender User
 }

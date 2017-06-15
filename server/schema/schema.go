@@ -9,7 +9,7 @@ import (
 var DB *gorm.DB
 
 type Model struct {
-	ID        uint `gorm:"primary_key;AUTO_INCREMENT"`
+	ID        uint64 `gorm:"primary_key;AUTO_INCREMENT"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time
