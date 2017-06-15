@@ -16,7 +16,7 @@ import store from './store';
 
 // Enable progressive web app support (with offline-plugin)
 if (process.env.NODE_ENV === 'production') {
-  require('./pwa')
+  //require('./pwa')
 }
 
 if (!window.location.origin) { // Some browsers (mainly IE) do not have this property, so we need to build it manually...
