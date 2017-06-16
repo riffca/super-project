@@ -12,7 +12,7 @@ window.colorLog = (color='green', font=18)=>{
 
 
 //import SockJS from'sockjs';
-import store from './store';
+import store from './template/store';
 
 // Enable progressive web app support (with offline-plugin)
 if (process.env.NODE_ENV === 'production') {

@@ -2,16 +2,15 @@ package service
 
 import (
 	"../schema"
+	"fmt"
 	"strconv"
-	// "strings"
 )
 
 type Lead struct {
-	Data     map[string]interface{}
-	active   interface{}
-	current  string
-	searchID string
-	model    *schema.Lead
+	Data    map[string]interface{}
+	active  interface{}
+	current string
+	model   *schema.Lead
 }
 
 // func (sc *Lead) ConnectUser() {
@@ -35,13 +34,17 @@ func (lead *Lead) Create() {
 		CreatedBy:  ucb,
 		Adress:     uad,
 	}
-	//DB.First(&u, cb.(string))
 
-	//mod := DB.Create(&l)
+	DB.Find(&ucb)
+	DB.Find(&uad)
+	DB.Create(&l)
 
-	mod := DB.Model(&ucb).Association("Leads").Append(&l)
+	DB.Model(&ucb).Association("Leads").Append(&l)
+	DB.Model(&l).Association("CreatedBy").Append(&ucb)
+	DB.Model(&l).Association("Members").Append([]schema.User{ucb, uad})
 
-	lead.Data["service_data"] = mod
+	m := DB.Model(&l).Association("Members").Find(&ucb)
+	lead.Data["service_data"] = m
 
 }
 
@@ -59,31 +62,24 @@ func (lead *Lead) Create() {
 
 // }
 
-// func (sc *Lead) Get() {
-//  sc.model = &schema.Lead{}
-//  sc.searchID = sc.Data["ID"].(string)
+func (lead *Lead) Get() {
 
-//  name := sc.Data["Name"].(string)
+	fmt.Println("GET LEAD------------------>")
 
-//  if len(sc.searchID) > 0 {
-//    sc.active, sc.current = sc.searchID, "id"
-//  }
+	lead.model = &schema.Lead{}
+	lead.model.ID, _ = strconv.ParseUint(lead.Data["ID"].(string), 10, 64)
+	lead.model.StatusCode, _ = strconv.ParseUint(lead.Data["StatusCode"].(string), 10, 64)
 
-//  if len(name) > 0 {
-//    sc.active, sc.current = name, "name"
-//  }
+	fmt.Println(lead.model)
 
-//  if len(sc.current) > 0 {
-//    m := []string{sc.current, " = ?"}
-//    d := DB.Where(strings.Join(m, ""), p.active).First(p.model)
-//    sc.Data["service_data"] = d
+	DB.First(&lead.model, lead.model.ID)
 
-//    return
+	a := DB.Model(&lead.model).Association("Members").Find(&lead.model.Members)
 
-//  }
+	if a.Error != nil {
+		panic(a.Error)
+	}
 
-//  s := []schema.Lead{}
-//  a := DB.Find(&s)
-//  sc.Data["service_data"] = a
+	lead.Data["service_data"] = a
 
-// }
+}

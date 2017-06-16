@@ -3,10 +3,6 @@ Vue.config.errorHandler = function (e) {
   console.log(e)
 }
 
-
-let authUserID = "1"
-let foreignUserID = "2"
-
 window.Application = new Vue({
   el: '#app',
   data(){
@@ -61,7 +57,6 @@ window.Application = new Vue({
       this.method = this.serviceMap[val][0]
       this.singleGetValue=""
       this.setModelBox()
-
     }
   },
 
@@ -79,38 +74,41 @@ window.Application = new Vue({
     refreshTables(){
       channel.req("Data", "DumpTables")
     },
+    dropModelBoxValues(){
+      for(let i in this.modelBox){
+        this.modelBox[i]=''
+      }
+    },
     setModelBox(){
       switch(this.method){
         case "Create":
-          this.modelBox=removeFields(this.jsonSchema,['ID'])
-          switch (this.service){
-            case "Lead":
-              this.modelBox['UserId'] = authUserID
-              this.modelBox['Adress'] = foreignUserID
-          }
-
           this.updateTextarea()
+          this.modelBox=removeFields(this.jsonSchema,['ID'])
+          this.dropModelBoxValues()
         break;
         case "Get":
           this.modelBox=removeFields(this.jsonSchema,['Password'])
           this.modelBox.ID=''
+          this.dropModelBoxValues()
         break;
         case "Update":
-          if(this.singleGetValue){
-            this.updateTextarea()
-          }
+          this.updateTextarea()
       }
 
       this.$nextTick(()=>{
         this.$refs.input.forEach(i=>{
           let v = i.getAttribute("data-type")
-          i.setAttribute('type',v)
+          //[todo] do it any another way
+          //this.convertEmbed to use
+          //i.setAttribute('type',v)
         })
       })
     },
 
     updateTextarea(){
-      this.modelBox=removeFields(this.jsonSchema, ['ID'])
+      if(this.singleGetValue){
+        this.modelBox=removeFields(this.singleGetValue, ['ID'])
+      }
       this.$nextTick(()=>{
         let e = document.getElementById('json-content');
         if(e) {
@@ -136,6 +134,22 @@ window.Application = new Vue({
       } else {
         return jsons.indexOf(val) != -1
       }
+    },
+
+
+    createFakeUsers(){
+
+      this.service = 'User'
+
+      this.$nextTick(()=>{
+        this.method = 'Create'
+        for(let i=0;i<50;i++){
+          this.modelBox.UserName = faker.name.firstName()
+          this.modelBox.Email = faker.internet.email()
+          this.modelBox.Password = 'secret'
+          this.send()
+        }
+      })
     },
 
     send(){
@@ -192,6 +206,14 @@ window.Application = new Vue({
 
     }
 
+  },
+  convertEmbed(){
+    for(let k in this.modelBox){
+      this.modelBox[k] = {
+        name: this.modelBox[k],
+        type: this.isNumber(k)
+      }
+    }
   },
   mounted(){
     let self = this

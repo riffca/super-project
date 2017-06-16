@@ -4,6 +4,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.4.1/async.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js"></script>
 
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css"></link>
@@ -83,7 +84,8 @@
 
       status: <span id="status">connecting...</span>
       <a href="https://jsfiddle.net/" target="_blank">edit JSON</a>
-      <span class="drop-tables-button" @click="refreshTables">Refresh Tables</s>
+      <span class="drop-tables-button" @click="refreshTables">DropTables</span>
+      <span class="drop-tables-button" @click="createFakeUsers">CreateFakeUser</span>
     </div>
     <div class="response">
 

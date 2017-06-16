@@ -1,6 +1,10 @@
+
+
+
 class Channel {
 
-  constructor(){
+  constructor(adress){
+    this.adress = adress
     this.sock = null
     this.reqBox = []
     this.eventBox = []
@@ -18,7 +22,7 @@ class Channel {
       window.location.origin = window.location.protocol + '//' +
       window.location.hostname + (window.location.port ? (':' + window.location.port) : '');
     }
-    let origin = window.location.origin;
+    let origin = 'http://192.168.1.3:9000'//window.location.origin;
 
     // options usage example
     let options = {
@@ -40,12 +44,12 @@ class Channel {
     self.sock.onopen = function(e) {
       self.connected = true
       console.log('%cconnection open', "font-size: 1.7rem")
-      document.getElementById("status").innerHTML = "connected"
+
+      //document.getElementById("status").innerHTML = "connected"
 
     };
 
     self.sock.onmessage = function(e) {
-
 
       let data = JSON.parse(e.data)
       self.parseJsonEmbed(data)
@@ -54,7 +58,6 @@ class Channel {
       }
 
       self.logMessage(data)
-      //as server need more fresh user data.service_data
       self.execHandler(data)
 
     };
@@ -65,12 +68,20 @@ class Channel {
         self.init()
       },1000)
 
-      document.getElementById("status").innerHTML = "connection closed";
+      //document.getElementById("status").innerHTML = "connection closed";
       console.log('%cconnection closed', "font-size: 1.7rem")
     };
 
   }
 
+  getHandlerData(data,embed){
+    //inspect response_data
+    switch(embed){
+      case "echo_data_included": return data.response_data
+      case "echo_data_excluded": return data.response_data.service_data
+    }
+    return data.response_data
+  }
   parseJsonEmbed(data){
     try {
       data = JSON.parse(data).response_data
@@ -88,15 +99,19 @@ class Channel {
     console.log(data)
   }
 
+  logJson(data){
+    console.log(JSON.parse(JSON.stringify(data)))
+  }
+
+
   logMessage(data){
     console.log("%cПринято<----------- \n" +
       data.service + " " + data.method + (this.listen ? "  %clisten" : "%c"),
       "color: darkgreen; font-size: 1.4rem", "color: darkred; font-size: 1.1rem" )
     console.log(data)
     console.log("%c ResponseData:","color: darkgreen; font-size: 1.2rem")
-    console.log(JSON.parse(JSON.stringify(data.response_data)))
+    this.logJson(this.getHandlerData(data,"echo_data_included"))
     this.listen = false
-
   }
 
   logRequest(request){
@@ -105,7 +120,7 @@ class Channel {
       "color: darkblue; font-size: 1.4rem")
     console.log(request)
     console.log("%c RequestData:","color: darkblue; font-size: 1.2rem")
-    console.log(JSON.parse(JSON.stringify(request.request_data)))
+    this.logJson(request.request_data)
   }
 
 
@@ -169,15 +184,13 @@ class Channel {
     let self = this
     this.eventBox.forEach(function(i){
       if(i.event == (data.service + " " + data.method)){
-        i.func(data.response_data)
-        //self.historyBox.push(i)
+        i.func(self.getHandlerData(data,"echo_data_excluded"))
       }
     })
 
     this.reqBox.forEach(function(i){
       if(i.id == data.map_id && i.func){
-        i.func(data.response_data)
-        //self.historyBox.push(i)
+        i.func(self.getHandlerData(data,"echo_data_excluded"))
       }
     })
 
@@ -185,17 +198,9 @@ class Channel {
 
 }
 
-let channel = new Channel();
+let channel = new Channel("localhost:9000");
 
-
-
-
-
-
-
-
-
-
+export default channel
 
 
 

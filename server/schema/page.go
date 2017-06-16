@@ -2,8 +2,8 @@ package schema
 
 type Page struct {
 	Model
-	Name    string `gorm:"unique"`
-	Content string
+	Name    string `json:"name" gorm:"unique"`
+	Content string `json:content"" `
 }
 
 func (u *Page) BeforeCreate() (err error) {

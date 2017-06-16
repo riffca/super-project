@@ -9,6 +9,11 @@ type Lead struct {
 	StatusCode uint64
 }
 
+type Member struct {
+	ConnectedAt User
+	Role        uint64
+}
+
 type Message struct {
 	Model
 	Text   string

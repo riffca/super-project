@@ -12,8 +12,14 @@ export default new Router({
       component: Home
     },
     {
-      path: '/input',
-      component: require('../views/edit-landing')
+      name: 'vk-admin',
+      path: '/vk-admin',
+      component: require('views/vk-admin')
+    },
+    {
+      name: 'user',
+      path: '/:username',
+      component: require('root/views/profile')
     }
   ]
 })

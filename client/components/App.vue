@@ -5,26 +5,6 @@
 </template>
 
 <script>
-
-import * as authService from '../services/auth';
-
-export default {
-
-  mounted(){
-
-    authService
-      .checkToken({},data=>{
-        // console.log('%cCOMPONENT LOG:', colorLog('darkyellow'));
-        // console.log(data);
-        // console.log('%cEND LOG:', colorLog('darkyellow'));
-        // return data;
-
-      })
-
-  }
-}
-
-
 </script>
 
 <style>

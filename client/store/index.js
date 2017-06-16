@@ -4,7 +4,10 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-  count: 0
+  user: {
+    all:{},
+    id:''
+  }
 }
 
 const mutations = {
