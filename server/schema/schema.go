@@ -9,10 +9,10 @@ import (
 var DB *gorm.DB
 
 type Model struct {
-	ID        uint64 `gorm:"primary_key;AUTO_INCREMENT"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
+	ID        uint64     `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 func mysql() *gorm.DB {

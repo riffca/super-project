@@ -16,8 +16,8 @@ type User struct {
 
 func (u *User) Update() {
 
-	un, em := u.Data["UserName"], u.Data["Email"]
-	pw := u.Data["Password"]
+	un, em := u.Data["user_name"], u.Data["email"]
+	pw := u.Data["password"]
 
 	id, _ := strconv.ParseUint(u.searchID, 10, 64)
 
@@ -35,9 +35,9 @@ func (u *User) Update() {
 
 func (p *User) Get() {
 	p.model = &schema.User{}
-	p.searchID = p.Data["ID"].(string)
-	username := p.Data["UserName"].(string)
-	email := p.Data["Email"].(string)
+	p.searchID = p.Data["id"].(string)
+	username := p.Data["user_name"].(string)
+	email := p.Data["email"].(string)
 
 	if len(username) > 0 {
 		p.active, p.current = username, "user_name"
@@ -67,8 +67,8 @@ func (p *User) Get() {
 }
 
 func (u *User) Create() {
-	n, e := u.Data["UserName"], u.Data["Email"]
-	pw := u.Data["Password"]
+	n, e := u.Data["user_name"], u.Data["email"]
+	pw := u.Data["password"]
 
 	pa := schema.User{
 		UserName: n.(string),

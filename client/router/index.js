@@ -20,6 +20,11 @@ export default new Router({
       name: 'user',
       path: '/:username',
       component: require('root/views/profile')
+    },
+    {
+      name: 'leads',
+      path: '/leads',
+      components: require('root/views/leads')
     }
   ]
 })

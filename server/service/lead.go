@@ -22,18 +22,19 @@ type Lead struct {
 // }
 
 func (lead *Lead) Create() {
-
 	ucb := schema.User{}
-	ucb.ID, _ = strconv.ParseUint(lead.Data["CreatedBy"].(string), 10, 64)
+	ucb.ID, _ = strconv.ParseUint(lead.Data["created_by"].(string), 10, 64)
 	uad := schema.User{}
-	uad.ID, _ = strconv.ParseUint(lead.Data["Adress"].(string), 10, 64)
-	code, _ := strconv.ParseUint(lead.Data["StatusCode"].(string), 10, 64)
+	uad.ID, _ = strconv.ParseUint(lead.Data["adress"].(string), 10, 64)
+	code, _ := strconv.ParseUint(lead.Data["status_code"].(string), 10, 64)
 
 	l := schema.Lead{
 		StatusCode: code,
 		CreatedBy:  ucb,
 		Adress:     uad,
 	}
+	fmt.Println("LEAD CREATE------------------>")
+	fmt.Println(&l)
 
 	DB.Find(&ucb)
 	DB.Find(&uad)
@@ -41,9 +42,8 @@ func (lead *Lead) Create() {
 
 	DB.Model(&ucb).Association("Leads").Append(&l)
 	DB.Model(&l).Association("CreatedBy").Append(&ucb)
-	DB.Model(&l).Association("Members").Append([]schema.User{ucb, uad})
+	m := DB.Model(&l).Association("Members").Append([]schema.User{ucb, uad})
 
-	m := DB.Model(&l).Association("Members").Find(&ucb)
 	lead.Data["service_data"] = m
 
 }
@@ -65,21 +65,15 @@ func (lead *Lead) Create() {
 func (lead *Lead) Get() {
 
 	fmt.Println("GET LEAD------------------>")
+	model := schema.Lead{}
+	model.ID, _ = strconv.ParseUint(lead.Data["id"].(string), 10, 64)
+	// lead.model = &schema.Lead{}
+	// lead.model.StatusCode, _ = strconv.ParseUint(lead.Data["status_code"].(string), 10, 64)
 
-	lead.model = &schema.Lead{}
-	lead.model.ID, _ = strconv.ParseUint(lead.Data["ID"].(string), 10, 64)
-	lead.model.StatusCode, _ = strconv.ParseUint(lead.Data["StatusCode"].(string), 10, 64)
+	DB.Where(&model).First(&model)
+	model.Members = []schema.User{}
+	DB.Model(&model).Association("Members").Find(&model.Members)
 
-	fmt.Println(lead.model)
-
-	DB.First(&lead.model, lead.model.ID)
-
-	a := DB.Model(&lead.model).Association("Members").Find(&lead.model.Members)
-
-	if a.Error != nil {
-		panic(a.Error)
-	}
-
-	lead.Data["service_data"] = a
+	lead.Data["service_data"] = model
 
 }

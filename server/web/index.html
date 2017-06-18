@@ -39,7 +39,7 @@
         <button class="send-button" @click="method='Update'" v-if="method=='Get' && singleGetValue">
           update
         </button>
-        <span>{{singleGetValue.Name}}</span>
+        <span>{{!singleGetValue?"":singleGetValue.name}}</span>
         <button class="send-button" @click="method='Get'" v-if="method=='Update'">
           get new
         </button>

@@ -69,6 +69,7 @@ func (t *DataScheme) DumpTables() {
 		&schema.User{},
 		&schema.Lead{},
 		&schema.Message{})
+	DB.DropTable("user_leads")
 	DB.CreateTable(
 		&schema.Page{},
 		&schema.User{},

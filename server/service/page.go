@@ -20,9 +20,9 @@ type Page struct {
 
 func (p *Page) Update() {
 
-	n, c := p.Data["Name"], p.Data["Content"]
+	n, c := p.Data["name"], p.Data["content"]
 
-	id, _ := strconv.ParseUint(p.Data["ID"].(string), 10, 64)
+	id, _ := strconv.ParseUint(p.Data["id"].(string), 10, 64)
 
 	page := schema.Page{}
 	DB.First(&page, id)
@@ -35,10 +35,10 @@ func (p *Page) Update() {
 }
 
 func (p *Page) Get() {
-	p.model = &schema.Page{}
-	p.searchID = p.Data["ID"].(string)
 
-	name := p.Data["Name"].(string)
+	p.model = &schema.Page{}
+	p.searchID = p.Data["id"].(string)
+	name := p.Data["name"].(string)
 
 	if len(p.searchID) > 0 {
 		p.active, p.current = p.searchID, "id"
@@ -64,7 +64,7 @@ func (p *Page) Get() {
 }
 
 func (p *Page) Create() {
-	n, c := p.Data["Name"], p.Data["Content"]
+	n, c := p.Data["name"], p.Data["content"]
 	pa := schema.Page{Name: n.(string), Content: c.(string)}
 	page := DB.Create(&pa)
 	p.Data["service_data"] = page

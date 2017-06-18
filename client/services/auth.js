@@ -8,3 +8,14 @@
 //     })
 
 // }
+
+export function fastUserAuth = (store) =>{
+  let u = localStorage.getItem("user")
+  if(!u){
+    localStorage.setItem("user",JSON.stringify(user))
+    localStorage.setItem("user_profile",JSON.stringify(user))
+    store.state.user.auth=true
+  }
+}
+
+

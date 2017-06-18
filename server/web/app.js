@@ -64,10 +64,10 @@ window.Application = new Vue({
   methods:{
     isNumber(k){
       let opt = [
-      'CreatedBy',
-      'Adress',
-      'StatusCode',
-      'ID'
+      'created_at',
+      'adress',
+      'status_code',
+      'id'
       ]
       return opt.indexOf(k)!=-1
     },
@@ -76,19 +76,20 @@ window.Application = new Vue({
     },
     dropModelBoxValues(){
       for(let i in this.modelBox){
+        if(i==this.jsonFieldKey)continue
         this.modelBox[i]=''
       }
     },
     setModelBox(){
       switch(this.method){
         case "Create":
-          this.updateTextarea()
-          this.modelBox=removeFields(this.jsonSchema,['ID'])
+          this.modelBox=removeFields(this.jsonSchema,['id'])
           this.dropModelBoxValues()
+          this.updateTextarea()
         break;
         case "Get":
-          this.modelBox=removeFields(this.jsonSchema,['Password'])
-          this.modelBox.ID=''
+          this.modelBox=removeFields(this.jsonSchema,['password'])
+          this.modelBox.id=''
           this.dropModelBoxValues()
         break;
         case "Update":
@@ -107,11 +108,12 @@ window.Application = new Vue({
 
     updateTextarea(){
       if(this.singleGetValue){
-        this.modelBox=removeFields(this.singleGetValue, ['ID'])
+        this.modelBox=removeFields(this.singleGetValue, ['id'])
       }
       this.$nextTick(()=>{
         let e = document.getElementById('json-content');
         if(e) {
+          console.log(this.modelBox['content'])
           e.textContent=JSON.stringify(
           JSON.parse((this.modelBox[this.jsonFieldKey])
           .replace(/&quot;/g,'"')),null,2
@@ -124,7 +126,7 @@ window.Application = new Vue({
       return JSON.stringify(val,null,2) + '\n';
     },
     isJson(val){
-      let jsons=["Content"]
+      let jsons=["content"]
       if(typeof val=="object"){
         let a
         for(let k in val){
@@ -144,9 +146,9 @@ window.Application = new Vue({
       this.$nextTick(()=>{
         this.method = 'Create'
         for(let i=0;i<50;i++){
-          this.modelBox.UserName = faker.name.firstName()
-          this.modelBox.Email = faker.internet.email()
-          this.modelBox.Password = 'secret'
+          this.modelBox.user_name = faker.name.firstName()
+          this.modelBox.email = faker.internet.email()
+          this.modelBox.password = 'secret'
           this.send()
         }
       })
@@ -226,8 +228,8 @@ window.Application = new Vue({
       }
       self.$nextTick(()=>{
         //setDefault
-        self.method = "Create"
-        self.service = "Page"
+        self.method = "Get"
+        self.service = "Lead"
       })
     })
   }
@@ -239,13 +241,13 @@ function removeFields(jsonSchema,options){
   let val = {}
   options = options || []
   let arr = [
-    "CreatedAt",
-    "DeletedAt",
-    "UpdatedAt",
-    "Messages",
-    "Users",
-    "Leads",
-    "Members",
+    "created_at",
+    "deleted_at",
+    "updated_at",
+    "messages",
+    "users",
+    "leads",
+    "members",
   ]
   options = arr.concat(options)
   for(k in jsonSchema){
