@@ -61,9 +61,7 @@ type DataScheme struct {
 }
 
 func (t *DataScheme) DumpTables() {
-
 	log.Println("Dump Tables")
-
 	DB.DropTable(
 		&schema.Page{},
 		&schema.User{},
@@ -75,7 +73,6 @@ func (t *DataScheme) DumpTables() {
 		&schema.User{},
 		&schema.Lead{},
 		&schema.Message{})
-
 }
 
 func (t *DataScheme) Echo() {
@@ -284,5 +281,24 @@ func needConvert(s interface{}) map[string]interface{} {
 	}
 
 	return inter
+
+}
+
+func lear() {
+
+	type T struct {
+		A int
+		B string
+	}
+
+	t := T{23, "skidoo"}
+	s := reflect.ValueOf(&t).Elem()
+	typeOfT := s.Type()
+
+	for i := 0; i < s.NumField(); i++ {
+		f := s.Field(i)
+		fmt.Printf("%d: %s %s = %v\n", i,
+			typeOfT.Field(i).Name, f.Type(), f.Interface())
+	}
 
 }

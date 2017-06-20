@@ -1,9 +1,10 @@
 <template lang="pug">
 
 #users-list
-  .list-item(v-for="value in $store.getters.userAll")
-    .content(@click="inviteConversation") Написать
-    .bottom-title {{ value.user_name }}
+  .list-item(v-for="user in $store.getters.userAll")
+    .content(@click="inviteConversation(user)") Написать
+    .bottom-title {{ user.user_name }}
+
 
 
 </template>
@@ -24,10 +25,10 @@ function fakeUsers(){
 }
 export default {
   methods:{
-    inviteConversation(){
+    inviteConversation(user){
       let profile = localStorage.getItem('profile')
       leadService
-        .CreateLead({adress:user.id, created_by: profile.id, status_code: 10 })
+        .CreateLead({adress_id:user.id, creator_id: profile.id, status_code: 10 })
         .then(data=>{
           this.$store.dispatch('addLead')
         })

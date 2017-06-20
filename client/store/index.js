@@ -22,15 +22,17 @@ const state = {
 
 
 const getters = {
-  userOne(state){
-    return state.user.all[state.user.id]
-  },
-  userAll(state){
-    return state.user.all
-  }
+  userOne: state=>state.user.all[state.user.id],
+  userAll: state =>state.user.all,
+  userAuth: state=>state.user.all[state.authId]
 }
 
 const mutations = {
+  USER_SET_AUTH(state) {
+    let user=state.FUNC_ARGUMENT
+    state.user.authId = user.user_name
+    state.user.all[user.user_name]=user
+  },
   USER_VIEW_ONE(state) {
     let user=state.FUNC_ARGUMENT
     state.user.all[user.user_name]=user
@@ -59,6 +61,10 @@ const mutations = {
 }
 
 const actions = {
+  authUser({state,commit},{user}){
+    state.FUNC_ARGUMENT=user
+    commit("USER_SET_AUTH")
+  },
   incrementAsync ({ state, commit }) {
     setTimeout(() => {
       commit('INCREMENT')
@@ -82,9 +88,9 @@ const actions = {
     state.FUNC_ARGUMENT = lead
     commit("LEAD_PUSH_ONE")
   },
-  leadsSet({state,commit},{lead}){
-    leadService
-      .GetUserLeads()
+  leadSet({state,commit}){
+    userService
+      .GetLeads()
       .then(data=>{
         state.FUNC_ARGUMENT=data
         commit("LEAD_SET_USER_LEADS")

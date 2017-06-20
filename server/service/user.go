@@ -2,6 +2,7 @@ package service
 
 import (
 	schema "../schema"
+	//"fmt"
 	"strconv"
 	"strings"
 )
@@ -11,7 +12,7 @@ type User struct {
 	active   interface{}
 	current  string
 	searchID string
-	model    *schema.User
+	model    schema.User
 }
 
 func (u *User) Update() {
@@ -34,7 +35,7 @@ func (u *User) Update() {
 }
 
 func (p *User) Get() {
-	p.model = &schema.User{}
+
 	p.searchID = p.Data["id"].(string)
 	username := p.Data["user_name"].(string)
 	email := p.Data["email"].(string)
@@ -53,7 +54,7 @@ func (p *User) Get() {
 
 	if len(p.current) > 0 {
 		m := []string{p.current, " = ?"}
-		d := DB.Where(strings.Join(m, ""), p.active).First(p.model)
+		d := DB.Where(strings.Join(m, ""), p.active).First(&p.model)
 		p.Data["service_data"] = d
 
 		return
@@ -70,11 +71,24 @@ func (u *User) Create() {
 	n, e := u.Data["user_name"], u.Data["email"]
 	pw := u.Data["password"]
 
-	pa := schema.User{
+	us := schema.User{
 		UserName: n.(string),
 		Email:    e.(string),
 		Password: pw.(string),
 	}
-	page := DB.Create(&pa)
-	u.Data["service_data"] = page
+	user := DB.Create(&us)
+	u.Data["service_data"] = user
+}
+
+func (u *User) GetLeads() {
+
+	u.model.ID, _ = strconv.ParseUint(u.Data["id"].(string), 10, 64)
+	DB.First(&u.model)
+	//ls := []schema.Lead{}
+
+	DB.Where(&u.model).First(&u.model)
+	d := DB.Model(&u.model).Association("Leads")
+	u.Data["service_data"] = d
+	u.Data["service_message"] = "NOT WORKING METHOD"
+
 }

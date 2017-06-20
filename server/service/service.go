@@ -38,6 +38,7 @@ func init() {
 			"Create",
 			"Update",
 			"Delete",
+			"GetLeads",
 			string(u),
 		},
 		"Page": {

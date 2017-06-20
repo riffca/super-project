@@ -10,70 +10,67 @@ type Lead struct {
 	Data    map[string]interface{}
 	active  interface{}
 	current string
-	model   *schema.Lead
+	model   schema.Lead
 }
-
-// func (sc *Lead) ConnectUser() {
-
-// }
-
-// func (sc *Lead) GetMessages() {
-
-// }
 
 func (lead *Lead) Create() {
-	ucb := schema.User{}
-	ucb.ID, _ = strconv.ParseUint(lead.Data["created_by"].(string), 10, 64)
+
+	ucr := schema.User{}
+	ucr.ID, _ = strconv.ParseUint(lead.Data["creator_id"].(string), 10, 64)
+
 	uad := schema.User{}
-	uad.ID, _ = strconv.ParseUint(lead.Data["adress"].(string), 10, 64)
+	uad.ID, _ = strconv.ParseUint(lead.Data["adress_id"].(string), 10, 64)
+
 	code, _ := strconv.ParseUint(lead.Data["status_code"].(string), 10, 64)
 
-	l := schema.Lead{
-		StatusCode: code,
-		CreatedBy:  ucb,
-		Adress:     uad,
-	}
-	fmt.Println("LEAD CREATE------------------>")
-	fmt.Println(&l)
-
-	DB.Find(&ucb)
+	// fmt.Println("LEAD CREATE------------------>")
+	DB.Find(&ucr)
 	DB.Find(&uad)
-	DB.Create(&l)
 
-	DB.Model(&ucb).Association("Leads").Append(&l)
-	DB.Model(&l).Association("CreatedBy").Append(&ucb)
-	m := DB.Model(&l).Association("Members").Append([]schema.User{ucb, uad})
+	l := schema.Lead{
+		CreatedBy:  ucr,
+		Adress:     uad,
+		CreatorID:  ucr.ID,
+		AdressID:   uad.ID,
+		StatusCode: code,
+	}
 
-	lead.Data["service_data"] = m
-
+	d := DB.Create(&l)
+	DB.Model(&l).Association("Members").Append([]schema.User{ucr, uad})
+	DB.Model(&ucr).Association("Leads").Append(&d)
+	if d.Error == nil {
+		lead.Data["service_data"] = d
+		lead.Data["service_message"] = "LEAD CREATED"
+	}
 }
 
-// func (sc *Lead) Update() {
+func (l *Lead) Get() {
+	if id, err := strconv.ParseUint(l.Data["id"].(string), 10, 64); err == nil {
+		l.model.ID = id
+	}
+	fmt.Println("ID-------------------------->", l.model.ID)
+	if sc, err := strconv.ParseUint(l.Data["status_code"].(string), 10, 64); err == nil {
+		l.model.StatusCode = sc
+	}
+	fmt.Println("STATUS CODE-------------------------->", l.model.StatusCode)
+	if l.model.ID == 0 && l.model.StatusCode == 0 {
+		all := []schema.Lead{}
+		d := DB.Find(&all)
+		l.Data["service_data"] = d
+		return
+	}
+	DB.Where(&l.model).First(&l.model)
+	DB.Model(&l.model).Association("Members").Find(&l.model.Members)
+	l.Data["service_data"] = l.model
+}
 
-//  id, _ := strconv.ParseUint(sc.Data["ID"].(string), 10, 64)
+func (l *Lead) Delete() {
+	if id, err := strconv.ParseUint(l.Data["id"].(string), 10, 64); err == nil {
+		l.model.ID = id
+	}
+	DB.Delete(&l.model)
+}
 
-//  mod := schema.Lead{}
-//  DB.First(&mod, id)
-//  d := DB.Model(&mod).Updates(schema.Lead{
-//    Name:    n.(string),
-//    Content: c.(string),
-//  })
-//  sc.Data["service_data"] = d
-
-// }
-
-func (lead *Lead) Get() {
-
-	fmt.Println("GET LEAD------------------>")
-	model := schema.Lead{}
-	model.ID, _ = strconv.ParseUint(lead.Data["id"].(string), 10, 64)
-	// lead.model = &schema.Lead{}
-	// lead.model.StatusCode, _ = strconv.ParseUint(lead.Data["status_code"].(string), 10, 64)
-
-	DB.Where(&model).First(&model)
-	model.Members = []schema.User{}
-	DB.Model(&model).Association("Members").Find(&model.Members)
-
-	lead.Data["service_data"] = model
+func (l *Lead) GetUserLeads() {
 
 }

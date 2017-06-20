@@ -1,6 +1,6 @@
 <template lang="pug">
 #leads
-  template(v-for="lead in $store.state.leads")
+  template(v-for="lead in $store.state.leads.all")
     .lead
       .title
       .status-code
@@ -13,7 +13,7 @@
 <script>
 import * as leadService from 'root/services/lead'
 export default {
-  beforeCreate(){
+  created(){
     this.$store.dispatch('leadSet')
   },
   data () {

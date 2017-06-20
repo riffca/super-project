@@ -1,21 +1,15 @@
-// import channel from './channel/channel-lite';
-
-// export function checkToken(data, func){
-
-//   return channel
-//     .req( 'auth','CheckToken', data , meta =>{
-//       func(meta);
-//     })
-
-// }
-
-export function fastUserAuth = (store) =>{
-  let u = localStorage.getItem("user")
-  if(!u){
+export const fakeUserAuth = store => {
+  let user = localStorage.getItem("user")
+  if(!user){
+    user = {
+      user_name: 'stas',
+      email: 'stas@ya.ru',
+      id: 1
+    }
     localStorage.setItem("user",JSON.stringify(user))
     localStorage.setItem("user_profile",JSON.stringify(user))
-    store.state.user.auth=true
   }
+  store.dispatch('authUser',{user: JSON.parse(user)})
 }
 
 

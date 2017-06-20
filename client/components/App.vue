@@ -5,6 +5,16 @@
 </template>
 
 <script>
+
+import * as authService from 'services/auth'
+
+export default {
+  created(){
+    authService.fakeUserAuth(this.$store)
+  }
+}
+
+
 </script>
 
 <style>

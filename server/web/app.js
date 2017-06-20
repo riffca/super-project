@@ -25,7 +25,9 @@ window.Application = new Vue({
       updateAction: false,
 
 
-      singleGetValue: ""
+      singleGetValue: "",
+      userAuth: "",
+      service_message:""
 
     }
   },
@@ -44,10 +46,12 @@ window.Application = new Vue({
   watch:{
 
     //Select service amd method
-    method(){
+    method(val){
+      localStorage.setItem('method',val)
       this.setModelBox()
     },
     service(val){
+      localStorage.setItem('service',val)
       let map = this.serviceMap[val];
       let last = map.length-1
       this.jsonSchema = JSON.parse(map[last]);
@@ -94,6 +98,11 @@ window.Application = new Vue({
         break;
         case "Update":
           this.updateTextarea()
+        break
+        case "GetLeads":
+          this.modelBox=removeFields(this.jsonSchema,['password','user_name','email'])
+          this.modelBox.id = this.userAuth
+        break
       }
 
       this.$nextTick(()=>{
@@ -140,11 +149,13 @@ window.Application = new Vue({
 
 
     createFakeUsers(){
-
       this.service = 'User'
-
       this.$nextTick(()=>{
         this.method = 'Create'
+        this.modelBox.user_name='stas'
+        this.modelBox.email='stas@ya.ru'
+        this.modelBox.password='secret'
+        this.send()
         for(let i=0;i<50;i++){
           this.modelBox.user_name = faker.name.firstName()
           this.modelBox.email = faker.internet.email()
@@ -185,29 +196,15 @@ window.Application = new Vue({
       }
 
       channel.req(this.service, this.method, req, function(data){
-
         self.response = data;
-
+        self.service_message = data.service_message
         let last = data.service_data;
-
-        if(self.method=="Get" && last.Error == null){
-          if(typeof last != "array"){
-            self.singleGetValue=last.Value
-          }
-        }
+        self.singleGetValue=last.Value?last.Value:last
         if(self.method=="Update" && last.Error == null){
-          self.singleGetValue=last.Value
           self.setModelBox()
         }
-        // if(self.method=="Create" && last.Error == null){
-        //   self.singleGetValue=last.Value
-        //   self.setModelBox()
-        // }
-
       })
-
     }
-
   },
   convertEmbed(){
     for(let k in this.modelBox){
@@ -216,6 +213,11 @@ window.Application = new Vue({
         type: this.isNumber(k)
       }
     }
+  },
+  created(){
+    fakeUserAuth(function(data){
+      this.authUser = data
+    })
   },
   mounted(){
     let self = this
@@ -227,9 +229,7 @@ window.Application = new Vue({
         self.services.push(k)
       }
       self.$nextTick(()=>{
-        //setDefault
-        self.method = "Get"
-        self.service = "Lead"
+        self.service=localStorage.getItem('service')||"User"
       })
     })
   }
@@ -248,6 +248,8 @@ function removeFields(jsonSchema,options){
     "users",
     "leads",
     "members",
+    "created_by",
+    "adress"
   ]
   options = arr.concat(options)
   for(k in jsonSchema){
@@ -257,6 +259,21 @@ function removeFields(jsonSchema,options){
     val[k]=jsonSchema[k]
   }
   return val
+}
+
+
+function fakeUserAuth(cb){
+  let user = localStorage.getItem("user")
+  if(!user){
+    user = {
+      user_name: 'stas',
+      email: 'stas@ya.ru',
+      id: 1
+    }
+    localStorage.setItem("user",JSON.stringify(user))
+    localStorage.setItem("user_profile",JSON.stringify(user))
+  }
+  cb(user)
 }
 
 
