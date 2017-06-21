@@ -21,7 +21,7 @@ export default {
       return "создан " + t.getHours() +  " : " + t.getMinutes()
     },
     openChat(id){
-      this.store.dispatch("openConversation",{id})
+      this.$store.dispatch("openConversation",{id})
     }
   },
   created(){

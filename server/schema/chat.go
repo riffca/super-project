@@ -19,7 +19,8 @@ type Member struct {
 type Message struct {
 	Model
 	Text     string
-	LeadId   uint64
+	Lead     Lead
+	LeadID   uint64
 	Sender   User
 	SenderID uint64
 }

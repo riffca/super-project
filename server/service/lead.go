@@ -45,16 +45,6 @@ func (lead *Lead) Create() {
 	}
 }
 
-func (l *Lead) Gety() {
-
-	for k := range l.Data {
-		switch k {
-		case "id":
-
-		}
-	}
-}
-
 func (l *Lead) Get() {
 
 	if id, err := strconv.ParseUint(l.Data["id"].(string), 10, 64); err == nil {
@@ -96,6 +86,27 @@ func (l *Lead) Delete() {
 	DB.Delete(&l.model)
 }
 
-func (l *Lead) UserLeads() {
+func (l *Lead) WriteMessage() {
+
+	m := l.Data["message"].(string)
+
+	uid, _ := strconv.ParseUint(l.Data["sender_id"].(string), 10, 64)
+	user := schema.User{}
+	user.ID = uid
+
+	l.model.ID, _ = strconv.ParseUint(l.Data["lead_id"].(string), 10, 64)
+
+	DB.First(&l.model)
+	DB.First(&user)
+	message := DB.Create(schema.Message{
+		Text:     m,
+		SenderID: user.ID,
+		Sender:   user,
+		Lead:     l.model,
+		LeadID:   l.model.ID,
+	})
+
+	l.Data["service_data"] = message
+	l.Data["service_message"] = "MESSAGE SEND"
 
 }
