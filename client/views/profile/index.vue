@@ -1,8 +1,8 @@
 <template lang="pug">
 #profile
   pre {{$store.getters.userOne}}
-  users-list {{$store.state}}
   leads {{$store.state}}
+  users-list {{$store.state}}
 
 </template>
 

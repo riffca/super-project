@@ -84,10 +84,11 @@ func (u *User) GetLeads() {
 
 	u.model.ID, _ = strconv.ParseUint(u.Data["id"].(string), 10, 64)
 	DB.First(&u.model)
-	//ls := []schema.Lead{}
+	ls := []schema.Lead{}
 
 	DB.Where(&u.model).First(&u.model)
-	d := DB.Model(&u.model).Association("Leads")
+	//q := u.model.Leads
+	d := DB.Model(&u.model).Association("Leads").Find(&ls)
 	u.Data["service_data"] = d
 	u.Data["service_message"] = "NOT WORKING METHOD"
 

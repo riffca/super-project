@@ -12,7 +12,7 @@
 
 
 <script>
-//import * as leadService from 'root/services/channel/chan'
+import * as leadService from 'root/services/lead'
 function fakeUsers(){
   let users = {}
   for(let i=1;i<20;i++){
@@ -25,13 +25,8 @@ function fakeUsers(){
 }
 export default {
   methods:{
-    inviteConversation(user){
-      let profile = localStorage.getItem('profile')
-      leadService
-        .CreateLead({adress_id:user.id, creator_id: profile.id, status_code: 10 })
-        .then(data=>{
-          this.$store.dispatch('addLead')
-        })
+    inviteConversation(adress){
+      this.$store.dispatch('addLead',{adress})
     }
   },
   data(){

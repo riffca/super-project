@@ -2,8 +2,9 @@ package service
 
 import (
 	"../schema"
-	"fmt"
+	//"fmt"
 	"strconv"
+	"strings"
 )
 
 type Lead struct {
@@ -44,15 +45,39 @@ func (lead *Lead) Create() {
 	}
 }
 
+func (l *Lead) Gety() {
+
+	for k := range l.Data {
+		switch k {
+		case "id":
+
+		}
+	}
+}
+
 func (l *Lead) Get() {
+
 	if id, err := strconv.ParseUint(l.Data["id"].(string), 10, 64); err == nil {
 		l.model.ID = id
 	}
-	fmt.Println("ID-------------------------->", l.model.ID)
+
 	if sc, err := strconv.ParseUint(l.Data["status_code"].(string), 10, 64); err == nil {
 		l.model.StatusCode = sc
 	}
-	fmt.Println("STATUS CODE-------------------------->", l.model.StatusCode)
+
+	l.model.CreatorID, _ = strconv.ParseUint(l.Data["creator_id"].(string), 10, 64)
+
+	if l.model.CreatorID > 0 {
+		l.current = "creator_id"
+		l.active = l.model.CreatorID
+		m := []string{l.current, " = ?"}
+		all := []schema.Lead{}
+		d := DB.Where(strings.Join(m, ""), l.active).Preload("Members").Find(&all)
+
+		l.Data["service_data"] = d
+		return
+	}
+
 	if l.model.ID == 0 && l.model.StatusCode == 0 {
 		all := []schema.Lead{}
 		d := DB.Find(&all)
@@ -71,6 +96,6 @@ func (l *Lead) Delete() {
 	DB.Delete(&l.model)
 }
 
-func (l *Lead) GetUserLeads() {
+func (l *Lead) UserLeads() {
 
 }

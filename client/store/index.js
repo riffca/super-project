@@ -13,7 +13,7 @@ const state = {
     authId:'',
   },
   leads:{
-    all:{},
+    all:[],
     id:''
   },
   count: 0,
@@ -24,7 +24,7 @@ const state = {
 const getters = {
   userOne: state=>state.user.all[state.user.id],
   userAll: state =>state.user.all,
-  userAuth: state=>state.user.all[state.authId]
+  userAuth: state=>state.user.all[state.user.authId]
 }
 
 const mutations = {
@@ -50,6 +50,7 @@ const mutations = {
   },
   LEAD_SET_USER_LEADS(state){
     let leads = state.FUNC_ARGUMENT
+    console.log(leads)
     state.leads.all = leads
   },
   INCREMENT (state) {
@@ -84,15 +85,23 @@ const actions = {
         commit("USER_VIEW_ALL")
       })
   },
-  addLead({state,commit},{lead}){
-    state.FUNC_ARGUMENT = lead
-    commit("LEAD_PUSH_ONE")
+  addLead({state,commit},{adress}){
+    leadService
+      .createLead({
+        adress_id:adress.id+"",
+        creator_id: state.user.authId+"",
+        status_code: "10"
+      })
+      .then(data=>{
+        state.FUNC_ARGUMENT = data.Value
+         commit("LEAD_PUSH_ONE")
+      })
   },
   leadSet({state,commit}){
-    userService
-      .GetLeads()
+    leadService
+      .getUserLeads({creator_id: "1"})
       .then(data=>{
-        state.FUNC_ARGUMENT=data
+        state.FUNC_ARGUMENT=data.Value
         commit("LEAD_SET_USER_LEADS")
       })
   }

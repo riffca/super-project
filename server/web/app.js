@@ -147,7 +147,30 @@ window.Application = new Vue({
       }
     },
 
-
+    fakeDataTest(service, method, options,time){
+      time=time||1
+      this.service = service
+      options=options||{}
+      this.$nextTick(()=>{
+        this.method = method
+        for(let i=0;i<time;i++){
+          for(let k in options){
+            this.modelBox[k]=options[k]
+            if(k=='adress_id'){
+              this.modelBox[k]=options[k]+i+''
+            }
+          }
+          this.send()
+        }
+      })
+    },
+    createFakeLeads(){
+      this.fakeDataTest('Lead','Create',{
+        creator_id: '1',
+        adress_id: 1,
+        status_code: Math.floor(Math.random()*(10-2))+2
+      }, 10)
+    },
     createFakeUsers(){
       this.service = 'User'
       this.$nextTick(()=>{
