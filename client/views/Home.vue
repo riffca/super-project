@@ -4,6 +4,8 @@
 
 <div class="landing">
 
+  <main-slider></main-slider>
+
 
   <skull>
     <glitch></glitch>
@@ -75,6 +77,7 @@ import skull from 'components/skull'
 import glitch from 'components/glitch'
 import menuComponent from 'components/menu'
 import Counter from 'components/Counter'
+import mainSlider from 'components/main-slider'
 //import $ from 'jquery';
 export default {
   mounted(){
@@ -101,6 +104,7 @@ export default {
     glitch,
     skull,
     menuComponent,
+    mainSlider
 
   },
   methods: {
