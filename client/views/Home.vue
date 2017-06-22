@@ -12,8 +12,8 @@
   </skull>
 
   <div class="header">
-    <menu-component></menu-component>
   </div>
+  <menu-component></menu-component>
 
   <template v-if="false">
 

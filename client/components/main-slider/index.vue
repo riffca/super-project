@@ -2,8 +2,11 @@
 #main-slider(:class="background||'purpl-bg'")
   .center
     .fake
-    img(src="./img/flash.png" v-if="flash")
-    img(src="./img/no-flash.png" v-if="!flash")
+    template(v-if="showWhite")
+      img(src="./img/white-logo.png")
+    template(v-if="!showWhite")
+      img(src="./img/flash.png" v-if="flash")
+      img(src="./img/no-flash.png" v-if="!flash")
     .paper
       img(src="./img/list.png")
 
@@ -22,7 +25,8 @@ export default {
   data(){
     return {
       flash:true,
-      count: 0
+      count: 0,
+      showWhite: false
     }
   },
   mounted(){
@@ -32,6 +36,10 @@ export default {
     setInterval(()=>{
       this.background=['grey-bg','pink-bg','purpl-bg'][Math.floor(Math.random() *3)]
     },3000)
+
+    setInterval(()=>{
+      this.showWhite=!this.showWhite
+    },12000)
 
   }
 
