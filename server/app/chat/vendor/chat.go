@@ -14,17 +14,20 @@ func (c *Chat) createConversation(sessionID string) {
 
 func (c *Chat) checkAdress(adress string, member string) bool {
 
-	for k, v := range c.conversations {
+	var check bool = false
+	for k := range c.conversations {
 		if adress == k {
-			for _, v := range v {
-				if v == member {
-					return true
-				}
-			}
+			check = true
+			// for _, v := range v {
+			//  if v == member {
+			//    return true
+			//  }
+			// }
 		}
 	}
 
-	return false
+	fmt.Println(check)
+	return check
 
 }
 

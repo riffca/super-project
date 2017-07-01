@@ -12,6 +12,8 @@ sock.onopen = function() {
 };
 
 sock.onmessage = function(e) {
+  console.log("%c<---ПРИНЯТО","font-size:1.4rem;color:darkblue")
+  console.log(JSON.parse(JSON.stringify(e.data)))
 	document.getElementById("output").value += e.data +"\n";
 };
 
@@ -20,3 +22,14 @@ sock.onclose = function() {
 	document.getElementById("status").innerHTML = "disconnected";
 	document.getElementById("send").disabled=true;
 };
+
+
+function sockSend(){
+  var data = {
+    session_id: document.getElementById("session").value || "default",
+    adress_id: document.getElementById("adress").value || "default",
+    text: document.getElementById("input").value
+  }
+  sock.send(JSON.stringify(data))
+  console.log(data)
+}

@@ -28,14 +28,14 @@ In that case you need to provide access to SubReader and SubChannel methods:
 package vendor
 
 import (
-	"fmt"
+	//"fmt"
 	"sync"
 )
 
 // Subscription Reader is used to read messages published by Publisher
 type SubReader interface {
 	// Read operation blocks and waits for message from Publisher
-	Read() interface{}
+	Read() MsgSchema
 	getSession() string
 }
 
@@ -51,19 +51,19 @@ type subscriber struct {
 	session string
 }
 
-type msgSchema map[string]interface{}
+type MsgSchema map[string]interface{}
 
 type msg struct {
-	val  interface{}
+	val  MsgSchema
 	next chan *msg
 }
 
 var chat *Chat = newChat()
 
-func newMsg(val interface{}) *msg { return &msg{val: val, next: make(chan *msg, 1)} }
+func newMsg(val MsgSchema) *msg { return &msg{val: val, next: make(chan *msg, 1)} }
 
 // Publish publishes a message to all existing subscribers
-func (p *Publisher) Publish(val interface{}) {
+func (p *Publisher) Publish(val MsgSchema) {
 	p.m.Lock()
 	defer p.m.Unlock()
 
@@ -75,7 +75,7 @@ func (p *Publisher) Publish(val interface{}) {
 }
 
 // SubReader returns a new reader for reading published messages and a last published message.
-func (p *Publisher) SubReader() (reader SubReader, lastMsg interface{}) {
+func (p *Publisher) SubReader() (reader SubReader, lastMsg MsgSchema) {
 	p.m.Lock()
 	defer p.m.Unlock()
 
@@ -91,45 +91,46 @@ func (p *Publisher) SubReader() (reader SubReader, lastMsg interface{}) {
 // SubChannel returns a new channel for reading published messages and a last published message.
 // If published messages equals (==) finalMsg then channel is closed afer putting message into channel.
 func (p *Publisher) SubChannel(finalMsg interface{}, session string) (
-	msgChan <-chan interface{},
-	lastMsg interface{},
+	msgChan <-chan MsgSchema,
+	lastMsg MsgSchema,
 ) {
 
 	p.sessionID = session
 	listener, cur := p.SubReader()
-	outch := make(chan interface{})
+	outch := make(chan MsgSchema)
 	go listen(listener, outch, finalMsg)
 	return outch, cur
 
 }
 
-func listen(subscriber SubReader, ch chan interface{}, finalMsg interface{}) {
+func listen(subscriber SubReader, ch chan MsgSchema, finalMsg interface{}) {
 	defer close(ch)
 	for {
 
 		state := subscriber.Read()
 
-		if chat.checkAdress(state["adress_id"], state["session_id"]) {
+		if state["adress_id"] == nil {
+			state["adress_id"] = "default"
+		}
+		if state["session_id"] == nil {
+			state["session_id"] = "default"
+		}
+
+		if !chat.checkAdress(state["adress_id"].(string), state["session_id"].(string)) {
 			continue
 		}
-		// if state != subscriber.getSession() {
-		//  continue
-		// }
 
 		ch <- state
-		if state == finalMsg {
+		if state["text"] == finalMsg {
 			return
 		}
 	}
 }
 
-func (s *subscriber) Read() interface{} {
+func (s *subscriber) Read() MsgSchema {
 	msg := <-s.in
-	//fmt.Println("msg := <-s.in:", msg)
 	s.in <- msg
-	//fmt.Println("s.in <- msg:", s.in)
 	s.in = msg.next
-	//fmt.Println("s.in = msg.next", s.in)
 	return msg.val
 }
 

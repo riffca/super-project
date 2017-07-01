@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-
 	//"github.com/igm/vendor"
 	"./vendor"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
@@ -22,8 +22,10 @@ func main() {
 func echoHandler(session sockjs.Session) {
 
 	session.Send("[ + ]new sockjs session established " + session.ID())
-	chat.Publish("[info] new participant joined chat")
-	defer chat.Publish("[info] participant left chat")
+
+	chat.Publish(vendor.MsgSchema{"text": "[info] new participant joined chat"})
+
+	defer chat.Publish(vendor.MsgSchema{"text": "[info] participant left chat"})
 
 	var closedSession = make(chan struct{})
 
@@ -34,7 +36,9 @@ func echoHandler(session sockjs.Session) {
 			case <-closedSession:
 				return
 			case msg := <-reader:
-				if err := session.Send(msg.(string)); err != nil {
+				r, _ := json.Marshal(&msg)
+				fmt.Println(string(r))
+				if err := session.Send(string(r)); err != nil {
 					return
 				}
 			}
@@ -43,11 +47,11 @@ func echoHandler(session sockjs.Session) {
 
 	for {
 		if msg, err := session.Recv(); err == nil {
-			var t interface{}
+			var t vendor.MsgSchema
 			if err := json.Unmarshal([]byte(msg), &t); err != nil {
 				panic(err)
 			}
-			chat.Publish(msg)
+			chat.Publish(t)
 			continue
 		}
 		break
