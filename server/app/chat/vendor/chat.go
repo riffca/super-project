@@ -3,19 +3,19 @@ package vendor
 import "fmt"
 
 type Chat struct {
-	conversations map[string][]string
+	Conversations map[string][]string
 }
 
-func (c *Chat) createConversation(sessionID string) {
+func (c *Chat) CreateConversation(sessionID string) {
 	i := []string{sessionID}
-	c.conversations[sessionID] = i
-	fmt.Println("ALL CONVERSATIONS", c.conversations)
+	c.Conversations[sessionID] = i
+	fmt.Println("ALL CONVERSATIONS", c.Conversations)
 }
 
-func (c *Chat) checkAdress(adress string, member string) bool {
+func (c *Chat) CheckAdress(adress string, member string) bool {
 
 	var check bool = false
-	for k := range c.conversations {
+	for k := range c.Conversations {
 		if adress == k {
 			check = true
 			// for _, v := range v {
@@ -32,5 +32,5 @@ func (c *Chat) checkAdress(adress string, member string) bool {
 }
 
 func newChat() *Chat {
-	return &Chat{conversations: map[string][]string{"default": {"default"}}}
+	return &Chat{Conversations: map[string][]string{"default": {"default"}}}
 }

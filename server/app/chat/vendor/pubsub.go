@@ -58,7 +58,7 @@ type msg struct {
 	next chan *msg
 }
 
-var chat *Chat = newChat()
+var ChatApp *Chat = newChat()
 
 func newMsg(val MsgSchema) *msg { return &msg{val: val, next: make(chan *msg, 1)} }
 
@@ -83,7 +83,7 @@ func (p *Publisher) SubReader() (reader SubReader, lastMsg MsgSchema) {
 		p.lastMsg = newMsg(nil)
 	}
 
-	chat.createConversation(p.sessionID)
+	ChatApp.CreateConversation(p.sessionID)
 
 	return &subscriber{p.lastMsg.next, p.sessionID}, p.lastMsg.val
 }
@@ -116,7 +116,7 @@ func listen(subscriber SubReader, ch chan MsgSchema, finalMsg interface{}) {
 			state["session_id"] = "default"
 		}
 
-		if !chat.checkAdress(state["adress_id"].(string), state["session_id"].(string)) {
+		if !ChatApp.CheckAdress(state["adress_id"].(string), state["session_id"].(string)) {
 			continue
 		}
 

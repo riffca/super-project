@@ -2,11 +2,20 @@
 <html lang="en">
 <head>
 <script type="text/javascript" src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
-<script type="text/javascript" src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
 <meta charset="UTF-8">
 <title>Chat Web Example</title>
 <style>
+  body, html {
+    margin:0;
+    padding:0;
+  }
   label, input { display: block }
+  .inline {
+    text-align: center;
+    display: inline-block;
+    width: 100px;
+  }
 </style>
 </head>
 
@@ -24,6 +33,25 @@ Messages from server:</br>
 </textarea>
 <br/>
 status: <span id="status">connecting...</span>
+
+
+<div id="app">
+  chats
+  <template v-for="c, k in conversations">
+    <div class="inline">
+      <div>{{ k }}</div>
+      members
+      <div v-for="i in c">
+        {{ i }}
+      </div>
+    </div>
+  </template>
+
+
+
+</div>
+
+<script type="text/javascript" src="app.js"></script>
 
 </body>
 </html>

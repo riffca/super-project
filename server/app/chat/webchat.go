@@ -51,6 +51,28 @@ func echoHandler(session sockjs.Session) {
 			if err := json.Unmarshal([]byte(msg), &t); err != nil {
 				panic(err)
 			}
+
+			switch t["action"].(string) {
+
+			case "get-conversations":
+
+				t["conversations"] = vendor.ChatApp.Conversations
+				r, _ := json.Marshal(t)
+				session.Send(string(r))
+				continue
+				break
+
+			case "chat-join":
+				room := vendor.ChatApp.Conversations[t["adress"].(string)]
+				room = append(room, session.ID())
+				t["active"] = room
+				r, _ := json.Marshal(t)
+				session.Send(string(r))
+				continue
+				break
+
+			}
+
 			chat.Publish(t)
 			continue
 		}
