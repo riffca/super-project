@@ -60,7 +60,18 @@ module.exports = {
       {
         test: /\.pug$/,
         loader: 'pug'
-      }
+      },
+      {
+        test:   /\.pcss$/,
+        loaders: "style-loader!css-loader!postcss-loader?sourceMap"
+      },
+      // {
+      //   test: /\.jsx$/,
+      //   use: [
+      //     'babel-loader',
+      //     'vue-jsx-hot-loader',
+      //   ],
+      // },
     ]
   },
   plugins: [

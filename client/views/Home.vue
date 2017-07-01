@@ -4,18 +4,19 @@
 
 <div class="landing">
 
+  <div class="header">
+  </div>
+
   <main-slider></main-slider>
-
-
+  <global-button>ПРИВЕТ</global-button>
   <skull>
     <glitch></glitch>
   </skull>
 
-  <div class="header">
-  </div>
   <menu-component></menu-component>
 
   <template v-if="false">
+
 
   <div class="body-images">
     <div class="screen-text">

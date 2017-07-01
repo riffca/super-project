@@ -1,36 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
-	"github.com/igm/pubsub"
+	//"github.com/igm/vendor"
+	"./vendor"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 )
 
-var chat pubsub.Publisher
-
-type Room struct {
-	*pubsub.Publisher
-}
-
-type Client struct {
-	room    *pubsub.Publisher
-	session *sockjs.Session
-}
-
-type Service struct {
-	clients map[string]*Client
-	message chan string
-}
-
-var clients []string
-
-func (s *Service) appendClient(session sockjs.Session) {
-	var puslisher pubsub.Publisher
-	c := Client{&puslisher, &session}
-	s.clients[session.ID()] = &c
-}
+var chat vendor.Publisher
 
 func main() {
 	http.Handle("/echo/", sockjs.NewHandler("/echo", sockjs.DefaultOptions, echoHandler))
@@ -43,37 +23,37 @@ func echoHandler(session sockjs.Session) {
 
 	session.Send("[ + ]new sockjs session established " + session.ID())
 	chat.Publish("[info] new participant joined chat")
-
-	clients = append(clients, session.ID())
-	log.Println(clients)
+	defer chat.Publish("[info] participant left chat")
 
 	var closedSession = make(chan struct{})
 
-	defer chat.Publish("[info] participant left chat")
-
 	go func() {
-
-		reader, _ := chat.SubChannel(nil)
+		reader, _ := chat.SubChannel(nil, session.ID())
 		for {
 			select {
 			case <-closedSession:
 				return
 			case msg := <-reader:
 				if err := session.Send(msg.(string)); err != nil {
-					log.Println("Session send")
-					log.Println(msg.(string))
 					return
 				}
 			}
 		}
 	}()
+
 	for {
 		if msg, err := session.Recv(); err == nil {
+			var t interface{}
+			if err := json.Unmarshal([]byte(msg), &t); err != nil {
+				panic(err)
+			}
 			chat.Publish(msg)
 			continue
 		}
 		break
 	}
+
 	close(closedSession)
 	log.Println("sockjs session closed")
+
 }

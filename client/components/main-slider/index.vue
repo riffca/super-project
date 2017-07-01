@@ -1,5 +1,5 @@
 <template lang="pug">
-#main-slider(:class="background||'purpl-bg'")
+#main-slider(:class="background")
   .center
     .fake
     template(v-if="showWhite")
@@ -26,7 +26,8 @@ export default {
     return {
       flash:true,
       count: 0,
-      showWhite: false
+      showWhite: false,
+      background: 'purpl-bg'
     }
   },
   mounted(){
