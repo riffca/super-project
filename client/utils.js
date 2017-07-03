@@ -457,3 +457,24 @@ export const declOfNum = (titles) => {
       return  titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
   }
 }
+
+
+
+
+
+
+export const fontLoader = param => {
+    var headID = document.getElementsByTagName('head')[0];
+    var link = document.createElement('link');
+    link.type = 'text/css';
+    headID.appendChild(link);
+    link.href = 'http://fonts.googleapis.com/css?family=' + param.family + '&effect=' + param.effect;
+}
+/*
+  Usage:
+  fontLoader({
+      family: 'Oswald',
+      effect: 'neon'
+  });
+*/
+

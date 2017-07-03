@@ -16,6 +16,13 @@
     display: inline-block;
     width: 100px;
   }
+
+  .room-name {
+    font-size: 1.3rem;
+    cursor:pointer;
+    padding: 15px;
+
+  }
 </style>
 </head>
 
@@ -39,7 +46,7 @@ status: <span id="status">connecting...</span>
   chats
   <template v-for="c, k in conversations">
     <div class="inline">
-      <div>{{ k }}</div>
+      <div class="room-name" @click="joinConversation(k)">{{ k }}</div>
       members
       <div v-for="i in c">
         {{ i }}

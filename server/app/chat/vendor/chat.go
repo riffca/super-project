@@ -12,6 +12,10 @@ func (c *Chat) CreateConversation(sessionID string) {
 	fmt.Println("ALL CONVERSATIONS", c.Conversations)
 }
 
+func (c *Chat) RemoveConversation(sessionID string) {
+	delete(c.Conversations, sessionID)
+}
+
 func (c *Chat) CheckAdress(adress string, member string) bool {
 
 	var check bool = false

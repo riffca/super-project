@@ -6,8 +6,10 @@ import (
 	"log"
 	"net/http"
 	//"github.com/igm/vendor"
+	"./actions"
 	"./vendor"
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
+	"strings"
 )
 
 var chat vendor.Publisher
@@ -25,7 +27,10 @@ func echoHandler(session sockjs.Session) {
 
 	chat.Publish(vendor.MsgSchema{"text": "[info] new participant joined chat"})
 
-	defer chat.Publish(vendor.MsgSchema{"text": "[info] participant left chat"})
+	defer func() {
+		vendor.ChatApp.RemoveConversation(session.ID())
+		chat.Publish(vendor.MsgSchema{"text": "[info] participant left chat"})
+	}()
 
 	var closedSession = make(chan struct{})
 
@@ -51,30 +56,21 @@ func echoHandler(session sockjs.Session) {
 			if err := json.Unmarshal([]byte(msg), &t); err != nil {
 				panic(err)
 			}
-
-			switch t["action"].(string) {
-
-			case "get-conversations":
-
-				t["conversations"] = vendor.ChatApp.Conversations
-				r, _ := json.Marshal(t)
-				session.Send(string(r))
-				continue
-				break
-
-			case "chat-join":
-				room := vendor.ChatApp.Conversations[t["adress"].(string)]
-				room = append(room, session.ID())
-				t["active"] = room
-				r, _ := json.Marshal(t)
-				session.Send(string(r))
-				continue
-				break
-
+			var p actions.PipeData = actions.PipeData{
+				Msg:     t,
+				Session: session.ID(),
 			}
+			if action, ok := t["action"]; ok {
+				m := actions.ActionsMap[action.(string)](p)
+				r, _ := json.Marshal(m)
 
-			chat.Publish(t)
-			continue
+				if strings.Index(action.(string), "chat") != -1 {
+					chat.Publish(m)
+				} else {
+					session.Send(string(r))
+				}
+				continue
+			}
 		}
 		break
 	}

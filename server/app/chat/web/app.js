@@ -11,9 +11,9 @@ function sockSend(data){
     action: "chat-default"
   }
   sock.send(JSON.stringify(data))
+  console.log("%cОТПРАВЛЕНО----->","font-size:1.4rem;color:darkgreen")
   console.log(data)
 }
-
 
 
 var getConversations = Object.assign({},
@@ -42,6 +42,23 @@ window.Application = new Vue({
       conversations: {}
     }
   },
+  methods: {
+    joinConversation(adress){
+      var chatJoin = Object.assign({},
+        {
+          session_id: "default",
+          adress: adress,
+          text: "text",
+        },
+        {
+          action: "chat-join",
+        }
+      )
+
+      sockSend(chatJoin)
+    }
+
+  },
   mounted(){
     var self = this
     window.sock = new SockJS(window.location.origin+'/echo')
@@ -57,13 +74,17 @@ window.Application = new Vue({
       console.log("%c<---ПРИНЯТО","font-size:1.4rem;color:darkblue")
 
       try {
+
         var data = JSON.parse(e.data);
         console.log(data)
         if(data.action == "get-conversations"){
           self.conversations = data.conversations
-
-
         }
+
+        if(data.action == "chat-join"){
+          sockSend(getConversations)
+        }
+
       } catch ( e ) {
 
       }
