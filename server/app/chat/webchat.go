@@ -63,7 +63,6 @@ func echoHandler(session sockjs.Session) {
 			if action, ok := t["action"]; ok {
 				m := actions.ActionsMap[action.(string)](p)
 				r, _ := json.Marshal(m)
-
 				if strings.Index(action.(string), "chat") != -1 {
 					chat.Publish(m)
 				} else {
@@ -78,4 +77,7 @@ func echoHandler(session sockjs.Session) {
 	close(closedSession)
 	log.Println("sockjs session closed")
 
+}
+
+type DataSchema struct {
 }

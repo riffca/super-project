@@ -11,22 +11,15 @@ type PipeData struct {
 
 var ActionsMap map[string]func(PipeData) vendor.MsgSchema = map[string]func(PipeData) vendor.MsgSchema{
 
-	"get-conversations": func(pipe PipeData) vendor.MsgSchema {
-		pipe.Msg["conversations"] = vendor.ChatApp.Conversations
-		return pipe.Msg
-
-	},
-
-	"chat-join": func(pipe PipeData) vendor.MsgSchema {
-		adr := pipe.Msg["adress"]
-		room := vendor.ChatApp.Conversations[adr.(string)]
-		room = append(room, pipe.Session)
-		pipe.Msg["active"] = room
-		return pipe.Msg
-	},
-
-	"chat-send": func(pipe PipeData) vendor.MsgSchema {
-		//pipe.Msg.ChatID
-		return pipe.Msg
-	},
+	"get-conversations": GetConversations,
+	"chat-leave":        ChatLeave,
+	"chat-join":         ChatJoin,
+	"chat-open":         ChatOpen,
 }
+
+func GetConversations(pipe PipeData) vendor.MsgSchema {
+	pipe.Msg["conversations"] = vendor.ChatApp.Conversations
+	return pipe.Msg
+}
+
+//var ChatApp PipeData

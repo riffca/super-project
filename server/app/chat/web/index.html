@@ -3,12 +3,14 @@
 <head>
 <script type="text/javascript" src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <meta charset="UTF-8">
 <title>Chat Web Example</title>
 <style>
   body, html {
     margin:0;
     padding:0;
+    padding-bottom: 500px;
   }
   label, input { display: block }
   .inline {
@@ -23,6 +25,12 @@
     padding: 15px;
 
   }
+
+  #response {
+    position: fixed;
+    bottom:0;
+    left:0;
+  }
 </style>
 </head>
 
@@ -36,25 +44,36 @@
 <button onclick="sockSend()" id="send">Send</button>
 <br/>
 Messages from server:</br>
-<textarea cols=80 rows=20 id="output">
+<!-- <textarea cols=80 rows=20 id="output">
 </textarea>
-<br/>
+<br/> -->
 status: <span id="status">connecting...</span>
 
 
 <div id="app">
-  chats
-  <template v-for="c, k in conversations">
-    <div class="inline">
-      <div class="room-name" @click="joinConversation(k)">{{ k }}</div>
-      members
-      <div v-for="i in c">
-        {{ i }}
+
+  <div id="response">
+    <h1>Response</h1>
+    <pre> {{ response }} </pre>
+  </div>
+
+  <div id="chats" class="row" >
+    <h1 class="text-center">Чаты</h1>
+    <template v-for="c, k in conversations">
+      <div class="col-md-3 room-name text-center" @click="joinConversation(k)">
+        <h2>{{ k }} {{conversations[k].length}}</h2>
       </div>
-    </div>
-  </template>
+    </template>
+  </div>
 
-
+  <div id="chat">
+    <h2>{{ conversation.name }}</h2>
+    <ul class="list-group">
+      <li v-for="member in conversation.members" class="list-group-item">
+        {{member}}
+      </li>
+    </ul>
+  </div>
 
 </div>
 
