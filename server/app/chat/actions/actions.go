@@ -4,22 +4,27 @@ import (
 	"../vendor"
 )
 
-type PipeData struct {
+type EmbedData struct {
 	Msg     vendor.MsgSchema
 	Session string
 }
 
-var ActionsMap map[string]func(PipeData) vendor.MsgSchema = map[string]func(PipeData) vendor.MsgSchema{
-
+var ActionsMap map[string]func(EmbedData) vendor.MsgSchema = map[string]func(EmbedData) vendor.MsgSchema{
 	"get-conversations": GetConversations,
 	"chat-leave":        ChatLeave,
 	"chat-join":         ChatJoin,
 	"chat-open":         ChatOpen,
+	"get-actions":       GetActions,
 }
 
-func GetConversations(pipe PipeData) vendor.MsgSchema {
-	pipe.Msg["conversations"] = vendor.ChatApp.Conversations
-	return pipe.Msg
+func GetConversations(data EmbedData) vendor.MsgSchema {
+	data.Msg["conversations"] = vendor.ChatApp.Conversations
+	return data.Msg
 }
 
-//var ChatApp PipeData
+func GetActions(data EmbedData) vendor.MsgSchema {
+	var m []string
+
+	data.Msg["actions"] = m
+	return data.Msg
+}

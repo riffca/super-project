@@ -9,8 +9,9 @@ window.Application = new Vue({
     return {
       name:"stas",
       conversations: {},
+      conversation: {},
       response: '',
-      conversation: {}
+      actions: []
     }
   },
   methods: {
@@ -20,26 +21,34 @@ window.Application = new Vue({
     },
 
     joinConversation(adress){
-      var chatJoin = Object.assign({},
-        {
-          session_id: "default",
-          adress: adress,
-          text: "text",
-        },
-        {
-          action: "chat-join",
-        }
-      )
-      sockSend(chatJoin)
-
+      chan
+        .req('chat-join',{adress: adress,text: "text"})
+        .then(data=>{
+          console.log(data)
+        })
     }
-
   },
-  mounted(){
-    chan.req('get-conversations').then(data=>{
-      this.conversations = data
+
+  created(){
+    chan.on('client-connect',data=>{
+      this.actions = data.payload.actions
     })
 
+    chan.on('all-hand', data=>{
+      this.response = data
+    })
+
+  },
+
+  mounted(){
+    chan
+      .req('get-conversations')
+      .then(payload=>{
+        this.conversations=payload.conversations
+      })
   }
 
 })
+
+
+

@@ -51,8 +51,6 @@ type subscriber struct {
 	session string
 }
 
-type MsgSchema map[string]interface{}
-
 type msg struct {
 	val  MsgSchema
 	next chan *msg

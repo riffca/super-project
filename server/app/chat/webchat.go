@@ -14,6 +14,12 @@ import (
 
 var chat vendor.Publisher
 
+type DataSchema struct {
+	Action  string           `json:"action"`
+	Payload vendor.MsgSchema `json:"payload"`
+	Token   string           `json:"token"`
+}
+
 func main() {
 	http.Handle("/echo/", sockjs.NewHandler("/echo", sockjs.DefaultOptions, echoHandler))
 	http.Handle("/", http.FileServer(http.Dir("web/")))
@@ -23,7 +29,21 @@ func main() {
 
 func echoHandler(session sockjs.Session) {
 
-	session.Send("[ + ]new sockjs session established " + session.ID())
+	//CONNECT NEW CLIENT ACTION
+	payload := make(map[string]interface{})
+	payload["socket_session"] = session.ID()
+	a := make([]string, 0)
+	for k := range actions.ActionsMap {
+		a = append(a, k)
+	}
+	payload["actions"] = a
+	var fcm DataSchema = DataSchema{
+		Action:  "client-connect",
+		Payload: payload,
+		Token:   "default",
+	}
+	result, _ := json.Marshal(fcm)
+	session.Send(string(result))
 
 	chat.Publish(vendor.MsgSchema{"text": "[info] new participant joined chat"})
 
@@ -52,24 +72,29 @@ func echoHandler(session sockjs.Session) {
 
 	for {
 		if msg, err := session.Recv(); err == nil {
-			var t vendor.MsgSchema
+
+			var t DataSchema
 			if err := json.Unmarshal([]byte(msg), &t); err != nil {
 				panic(err)
 			}
-			var p actions.PipeData = actions.PipeData{
-				Msg:     t,
+
+			var p actions.EmbedData = actions.EmbedData{
+				Msg:     t.Payload,
 				Session: session.ID(),
 			}
-			if action, ok := t["action"]; ok {
-				m := actions.ActionsMap[action.(string)](p)
-				r, _ := json.Marshal(m)
-				if strings.Index(action.(string), "chat") != -1 {
-					chat.Publish(m)
-				} else {
-					session.Send(string(r))
-				}
-				continue
+
+			t.Payload = actions.ActionsMap[t.Action](p)
+
+			r, _ := json.Marshal(t)
+
+			if strings.Index(t.Action, "chat") != -1 {
+				chat.Publish(t.Payload)
+			} else {
+				session.Send(string(r))
 			}
+
+			continue
+
 		}
 		break
 	}
@@ -77,7 +102,4 @@ func echoHandler(session sockjs.Session) {
 	close(closedSession)
 	log.Println("sockjs session closed")
 
-}
-
-type DataSchema struct {
 }

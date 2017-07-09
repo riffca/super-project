@@ -1,71 +1,109 @@
-function sockSend(data, cb){
-  data = data || {
-    session_id: document.getElementById("session").value || "default",
-    adress_id: document.getElementById("adress").value || "default",
-    text: document.getElementById("input").value,
-    action: "chat-default"
-  }
-
-  sock.send(JSON.stringify(data))
-  console.log("%cОТПРАВЛЕНО-----> " + data.action,"font-size:1.4rem;color:darkgreen")
-  console.log(data)
-
-
-}
+let token = "stas-token"
 
 class Chan {
 
   constructor(props) {
+
+    this.connected=false
     this.funcBox={}
 
-    init()
-  }
+    //SCHEMA
+    this.payload = {}
+    this.action = "default"
+    this.token = token
 
+    this.session = ""
 
-  reqInit(data,cb){
-    if(cb)this.funcBox[data.action] = cb
-    this.sock.send(JSON.stringify(data))
-    console.log("%cОТПРАВЛЕНО-----> " + data.action,"font-size:1.4rem;color:darkgreen")
-    console.log(data)
-  }
-
-
-  req(data){
-    return new Promise((resolve, reject)=>{
-      this.reqInit(data,function(res)=>{
-          resolve(res)
-      })
+    this.init()
+    this.on("client-connect",(p)=>{
+      this.session = p.payload.socket_session
     })
-  },
+    this.funcBox["all-hand"] = []
+
+  }
+  on(action,cb){
+    if(this.funcBox[action]){
+      this.funcBox[action].push(cb)
+    } else {
+      this.funcBox[action]=[cb]
+    }
+  }
+  service(action,data,cb){
+
+    if(!this.connected){
+      setTimeout(()=>{
+        this.service(action,data,cb)
+      },500)
+      return
+    }
+
+
+    this.action = action
+    this.payload = data
+    this.payload.socket_session = this.session
+
+    if(cb)this.on(action, cb)
+
+    let schema = {
+      action: this.action,
+      payload: this.payload
+    }
+
+    this.sock.send(JSON.stringify(schema))
+
+    console.log("%cОТПРАВЛЕНО-----> " + action,"font-size:1.4rem;color:darkgreen")
+    console.log(schema)
+
+  }
   init(){
     var self = this
     self.sock = new SockJS(window.location.origin+'/echo')
 
     self.sock.onopen = function() {
-      // console.log('connection open');
+      self.connected = true
       document.getElementById("status").innerHTML = "connected";
       document.getElementById("send").disabled=false;
     };
 
     self.sock.onmessage = function(e) {
 
+
       try {
         var data = JSON.parse(e.data);
         console.log("%c<---ПРИНЯТО " + data.action,"font-size:1.4rem;color:darkblue")
         console.log(data)
-        self.funcBox[data.action](data)
+
+        self.funcBox["all-hand"].forEach(func=>{
+          func(data)
+        })
+
+        self.funcBox[data.action].forEach(func=>{
+          func(data)
+        })
+
       } catch ( e ) {
+
+
 
       }
 
     };
-
     self.sock.onclose = function() {
-      // console.log('connection closed');
+      self.connected=false
+
       document.getElementById("status").innerHTML = "disconnected";
       document.getElementById("send").disabled=true;
     };
   }
+  req(action, data){
+    return new Promise((resolve,reject)=>{
+      this.service(action,data||{},(res)=>{
+        resolve(res.payload)
+      })
+    })
+  }
 }
 
 var chan = new Chan()
+
+

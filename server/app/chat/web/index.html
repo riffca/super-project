@@ -31,6 +31,26 @@
     bottom:0;
     left:0;
   }
+
+  .click-action ul {
+    list-style: none;
+  }
+  .click-action ul li {
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid grey;
+    margin: 4px 10px;
+    font-size: 2rem;
+  }
+
+
+  .click-action ul li:hover {
+    background: darkred;
+    color: white;
+    border: none;
+  }
 </style>
 </head>
 
@@ -53,7 +73,7 @@ status: <span id="status">connecting...</span>
 <div id="app">
 
   <div id="response">
-    <h1>Response</h1>
+    <h1>Payload</h1>
     <pre> {{ response }} </pre>
   </div>
 
@@ -75,8 +95,16 @@ status: <span id="status">connecting...</span>
     </ul>
   </div>
 
-</div>
+  <div class="click-action panel">
+    <ul>
+      <li v-for="action in actions">
+        {{ action }}
+      </li>
+    </ul>
+  </div>
 
+</div>
+<script type="text/javascript" src="chan.js"></script>
 <script type="text/javascript" src="app.js"></script>
 
 </body>
