@@ -29,7 +29,7 @@
   #response {
     position: fixed;
     bottom:0;
-    left:0;
+    right:0;
   }
 
   .click-action ul {
@@ -55,22 +55,15 @@
 </head>
 
 <body>
-<h1>Chat - Web Example</h1>
-<form>
-<label>Input text:</label> <input id="input" focus="true" />
-<lable>adress</lable> <input id="adress">
-<label>session</label> <input id="session">
-</form>
-<button onclick="sockSend()" id="send">Send</button>
-<br/>
-Messages from server:</br>
-<!-- <textarea cols=80 rows=20 id="output">
-</textarea>
-<br/> -->
-status: <span id="status">connecting...</span>
-
-
 <div id="app">
+
+
+  <label>Action</label> <input v-model="action">
+  <div v-for="v,k in modelBox">
+    <label>{{k}}</label> <input v-model="v">
+  </div>
+  <button @click="requestAll">SEND</button>
+
 
   <div id="response">
     <h1>Payload</h1>
@@ -81,7 +74,7 @@ status: <span id="status">connecting...</span>
     <h1 class="text-center">Чаты</h1>
     <template v-for="c, k in conversations">
       <div class="col-md-3 room-name text-center" @click="joinConversation(k)">
-        <h2>{{ k }} {{conversations[k].length}}</h2>
+        <h2>{{ k }} {{getLength(conversations[k].Members)}}</h2>
       </div>
     </template>
   </div>
@@ -97,8 +90,8 @@ status: <span id="status">connecting...</span>
 
   <div class="click-action panel">
     <ul>
-      <li v-for="action in actions">
-        {{ action }}
+      <li v-for="act in actions" @click="action=act">
+        {{ act }}
       </li>
     </ul>
   </div>

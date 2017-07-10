@@ -4,27 +4,20 @@ import (
 	"../vendor"
 )
 
+type Map map[string]interface{}
+
 type EmbedData struct {
-	Msg     vendor.MsgSchema
+	Msg     Map
 	Session string
 }
 
-var ActionsMap map[string]func(EmbedData) vendor.MsgSchema = map[string]func(EmbedData) vendor.MsgSchema{
+var ActionsMap map[string]func(EmbedData) Map = map[string]func(EmbedData) Map{
 	"get-conversations": GetConversations,
-	"chat-leave":        ChatLeave,
 	"chat-join":         ChatJoin,
-	"chat-open":         ChatOpen,
-	"get-actions":       GetActions,
+	"chat-send":         ChatSend,
 }
 
-func GetConversations(data EmbedData) vendor.MsgSchema {
+func GetConversations(data EmbedData) Map {
 	data.Msg["conversations"] = vendor.ChatApp.Conversations
-	return data.Msg
-}
-
-func GetActions(data EmbedData) vendor.MsgSchema {
-	var m []string
-
-	data.Msg["actions"] = m
 	return data.Msg
 }

@@ -4,18 +4,7 @@ import (
 	"../vendor"
 )
 
-type ChatCore interface {
-	Signup()
-	Login()
-	All()
-	Create()
-	Join()
-	Send()
-}
-
-type C ChatCore
-
-func ChatJoin(data EmbedData) vendor.MsgSchema {
+func ChatJoin(data EmbedData) Map {
 	adr := data.Msg["adress"]
 	room := vendor.ChatApp.Conversations[adr.(string)]
 	var ex bool = false
@@ -29,14 +18,12 @@ func ChatJoin(data EmbedData) vendor.MsgSchema {
 		room.Members[data.Session] = data.Session
 		vendor.ChatApp.Conversations[adr.(string)] = room
 	}
-	data.Msg["active"] = room
+	data.Msg["chat"] = room
+	data.Msg["conversations"] = vendor.ChatApp.Conversations
 	return data.Msg
 }
 
-func ChatLeave(data EmbedData) vendor.MsgSchema {
-	return data.Msg
-}
-
-func ChatOpen(data EmbedData) vendor.MsgSchema {
+func ChatSend(data EmbedData) Map {
+	data.Msg["conversations"] = vendor.ChatApp.Conversations
 	return data.Msg
 }

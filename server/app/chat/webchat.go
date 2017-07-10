@@ -14,12 +14,6 @@ import (
 
 var chat vendor.Publisher
 
-type DataSchema struct {
-	Action  string           `json:"action"`
-	Payload vendor.MsgSchema `json:"payload"`
-	Token   string           `json:"token"`
-}
-
 func main() {
 	http.Handle("/echo/", sockjs.NewHandler("/echo", sockjs.DefaultOptions, echoHandler))
 	http.Handle("/", http.FileServer(http.Dir("web/")))
@@ -29,33 +23,18 @@ func main() {
 
 func echoHandler(session sockjs.Session) {
 
-	//CONNECT NEW CLIENT ACTION
-	payload := make(map[string]interface{})
-	payload["socket_session"] = session.ID()
-	a := make([]string, 0)
-	for k := range actions.ActionsMap {
-		a = append(a, k)
-	}
-	payload["actions"] = a
-	var fcm DataSchema = DataSchema{
-		Action:  "client-connect",
-		Payload: payload,
-		Token:   "default",
-	}
-	result, _ := json.Marshal(fcm)
-	session.Send(string(result))
-
-	chat.Publish(vendor.MsgSchema{"text": "[info] new participant joined chat"})
+	session.Send(clientConnect(session.ID()))
+	chat.Publish(clientJoin(true))
 
 	defer func() {
 		vendor.ChatApp.RemoveConversation(session.ID())
-		chat.Publish(vendor.MsgSchema{"text": "[info] participant left chat"})
+		chat.Publish(clientJoin(false))
 	}()
 
 	var closedSession = make(chan struct{})
 
 	go func() {
-		reader, _ := chat.SubChannel(nil, session.ID())
+		reader, _ := chat.SubChannel("close-subchannel", session.ID())
 		for {
 			select {
 			case <-closedSession:
@@ -72,29 +51,22 @@ func echoHandler(session sockjs.Session) {
 
 	for {
 		if msg, err := session.Recv(); err == nil {
-
-			var t DataSchema
+			var t vendor.MsgSchema
 			if err := json.Unmarshal([]byte(msg), &t); err != nil {
 				panic(err)
 			}
-
 			var p actions.EmbedData = actions.EmbedData{
 				Msg:     t.Payload,
 				Session: session.ID(),
 			}
-
 			t.Payload = actions.ActionsMap[t.Action](p)
-
 			r, _ := json.Marshal(t)
-
 			if strings.Index(t.Action, "chat") != -1 {
-				chat.Publish(t.Payload)
+				chat.Publish(t)
 			} else {
 				session.Send(string(r))
 			}
-
 			continue
-
 		}
 		break
 	}
@@ -102,4 +74,38 @@ func echoHandler(session sockjs.Session) {
 	close(closedSession)
 	log.Println("sockjs session closed")
 
+}
+
+//ROOT ACTIONS
+
+func clientJoin(first bool) vendor.MsgSchema {
+	m := make(map[string]interface{})
+	var act string = "client-left"
+	m["text"] = "[info] new participant left chat"
+	if first {
+		act = "client-join"
+		m["text"] = "[info] new participant joined chat"
+	}
+	m["conversations"] = vendor.ChatApp.Conversations
+	return vendor.MsgSchema{
+		Action:  act,
+		Payload: m,
+	}
+}
+
+func clientConnect(id string) string {
+	payload := make(map[string]interface{})
+	payload["socket_session"] = id
+	a := make([]string, 0)
+	for k := range actions.ActionsMap {
+		a = append(a, k)
+	}
+	payload["actions"] = a
+	var fcm vendor.DataSchema = vendor.DataSchema{
+		Action:  "client-connect",
+		Payload: payload,
+		Token:   "default",
+	}
+	result, _ := json.Marshal(fcm)
+	return string(result)
 }

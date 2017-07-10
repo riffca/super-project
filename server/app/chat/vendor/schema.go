@@ -1,3 +1,9 @@
 package vendor
 
-type MsgSchema map[string]interface{}
+type DataSchema struct {
+	Action  string                 `json:"action"`
+	Payload map[string]interface{} `json:"payload"`
+	Token   string                 `json:"token"`
+}
+
+type MsgSchema DataSchema

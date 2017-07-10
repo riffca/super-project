@@ -56,7 +56,7 @@ type msg struct {
 	next chan *msg
 }
 
-var ChatApp *Chat = newChat()
+var ChatApp *ChatCore = newChat()
 
 func newMsg(val MsgSchema) *msg { return &msg{val: val, next: make(chan *msg, 1)} }
 
@@ -78,7 +78,7 @@ func (p *Publisher) SubReader() (reader SubReader, lastMsg MsgSchema) {
 	defer p.m.Unlock()
 
 	if p.lastMsg == nil {
-		p.lastMsg = newMsg(nil)
+		p.lastMsg = newMsg(MsgSchema{Action: "close-subchannel"})
 	}
 
 	ChatApp.CreateConversation(p.sessionID)
@@ -107,19 +107,27 @@ func listen(subscriber SubReader, ch chan MsgSchema, finalMsg interface{}) {
 
 		state := subscriber.Read()
 
-		if state["adress_id"] == nil {
-			state["adress_id"] = "default"
-		}
-		if state["session_id"] == nil {
-			state["session_id"] = "default"
+		a, ab := state.Payload["adress"]
+		s, sb := state.Payload["socket_session"]
+		sender, oks := state.Payload["sender"]
+		adress, oka := state.Payload["adress"]
+		text, okt := state.Payload["text"]
+
+		if oks && oka && okt {
+			ChatApp.saveMessage(adress.(string), sender.(string), text.(string))
 		}
 
-		if !ChatApp.CheckAdress(state["adress_id"].(string), state["session_id"].(string)) {
-			continue
+		if ab && sb {
+			if !ChatApp.CheckAdress(
+				a.(string),
+				s.(string),
+			) {
+				continue
+			}
 		}
 
 		ch <- state
-		if state["text"] == finalMsg {
+		if state.Action == finalMsg {
 			return
 		}
 	}

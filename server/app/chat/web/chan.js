@@ -18,7 +18,6 @@ class Chan {
     this.on("client-connect",(p)=>{
       this.session = p.payload.socket_session
     })
-    this.funcBox["all-hand"] = []
 
   }
   on(action,cb){
@@ -36,7 +35,6 @@ class Chan {
       },500)
       return
     }
-
 
     this.action = action
     this.payload = data
@@ -61,8 +59,6 @@ class Chan {
 
     self.sock.onopen = function() {
       self.connected = true
-      document.getElementById("status").innerHTML = "connected";
-      document.getElementById("send").disabled=false;
     };
 
     self.sock.onmessage = function(e) {
@@ -71,9 +67,9 @@ class Chan {
       try {
         var data = JSON.parse(e.data);
         console.log("%c<---ПРИНЯТО " + data.action,"font-size:1.4rem;color:darkblue")
-        console.log(data)
+        console.log(JSON.parse(JSON.stringify(data)))
 
-        self.funcBox["all-hand"].forEach(func=>{
+        self.funcBox["*"].forEach(func=>{
           func(data)
         })
 
@@ -90,14 +86,11 @@ class Chan {
     };
     self.sock.onclose = function() {
       self.connected=false
-
-      document.getElementById("status").innerHTML = "disconnected";
-      document.getElementById("send").disabled=true;
     };
   }
   req(action, data){
     return new Promise((resolve,reject)=>{
-      this.service(action,data||{},(res)=>{
+      this.service(action,data||{},res=>{
         resolve(res.payload)
       })
     })

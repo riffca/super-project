@@ -11,20 +11,34 @@ window.Application = new Vue({
       conversations: {},
       conversation: {},
       response: '',
-      actions: []
+      actions: [],
+      modelBox: {
+        sender: "",
+        adress: "default",
+        text:"Привет",
+      },
+      action: "chat-send"
     }
   },
   methods: {
-
+    getLength(obj){
+      return Object.keys(obj).length
+    },
     createConversation(members,name){
       this.conversation = { members, name }
     },
 
+    requestAll(){
+      chan.
+        req(this.action,this.modelBox)
+
+    },
+
     joinConversation(adress){
       chan
-        .req('chat-join',{adress: adress,text: "text"})
+        .req('chat-join',{adress: adress, text: "text"})
         .then(data=>{
-          console.log(data)
+
         })
     }
   },
@@ -32,10 +46,14 @@ window.Application = new Vue({
   created(){
     chan.on('client-connect',data=>{
       this.actions = data.payload.actions
+      this.modelBox.sender = chan.session
     })
 
-    chan.on('all-hand', data=>{
+    chan.on('*', data=>{
       this.response = data
+      if(data.payload.conversations){
+        this.conversations=data.payload.conversations
+      }
     })
 
   },
