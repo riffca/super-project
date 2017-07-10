@@ -27,6 +27,11 @@ export default new Router({
       component: require('root/components/todo')
     },
     {
+      path: "/music-players",
+      name: "music-players",
+      component: require('root/components/music-player/players')
+    },
+    {
       name: 'user',
       path: '/:username',
       component: require('root/views/profile')
