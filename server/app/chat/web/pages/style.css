@@ -1,0 +1,46 @@
+body, html {
+  margin:0;
+  padding:0;
+  padding-bottom: 500px;
+}
+
+label, input { display: block }
+
+.inline {
+  text-align: center;
+  display: inline-block;
+  width: 100px;
+}
+
+.room-name {
+  font-size: 1.3rem;
+  cursor:pointer;
+  padding: 15px;
+
+}
+
+#response {
+  position: fixed;
+  bottom:0;
+  right:0;
+}
+
+.click-action ul {
+  list-style: none;
+}
+.click-action ul li {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid grey;
+  margin: 4px 10px;
+  font-size: 2rem;
+}
+
+
+.click-action ul li:hover {
+  background: darkred;
+  color: white;
+  border: none;
+}

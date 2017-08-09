@@ -1,17 +1,14 @@
 <template lang="pug">
 
-#menu-component(:class="{'open': menuOpen}")
-  span(@click="menuOpen = !menuOpen") menu
+#menu-component(:class="{'open': menuOpen}" @click="menuOpen = !menuOpen")
+  span(@click.stop="menuOpen = !menuOpen") menu
+  h1 {{$root.name}}
   .menu-click
   .menu-items(:class="{'open': menuOpen}")
     ul
-      li Портфолио
-      li Услуги
-      li Студия
-      li
-        ul
-          li vk.com
-          li
+      template(v-for="o in $root.menu.options")
+        li {{o.title}}
+  .right-products
 
 </template>
 
@@ -31,21 +28,38 @@ export default {
 <style lang="postcss">
 #menu-component {
   transition: all .8s;
-  background: rgba(0,0,0,0.57);
+  background: rgba(175,145,145,0.57);
   position: fixed;
   top:0;
-  left:-400px;
+  left:-100vw;
   display: inline-block;
-  width: 400px;
+  width: 100vw;
   height: 100%;
   span {
     display: inline-block;
-    margin-left: 310px;
+    margin-left: 710px;
     margin-top: 100px;
     text-transform: uppercase;
     text-align: center;
     height: 100px;
     width: 100%;
+    color: white;
+    .open & {
+      margin-left: 710px;
+    }
+  }
+  .right-products {
+    margin-top: 10px;
+    position: absolute;
+    right:0;
+    top:0;
+    width: 49vw;
+    background: white;
+    height: 100vh;
+    margin-bottom: 10px;
+  }
+
+  h1 {
     color: white;
 
   }
@@ -55,7 +69,6 @@ export default {
       .menu-click {
       span {
         padding: 20px;
-
         text-align: center;
       }
     }
@@ -73,6 +86,7 @@ export default {
     transition: all .8s;
     background: white;
     position: relative;
+    width: 50%;
     height: 90%;
     left: -500px;
     &.open {

@@ -1,0 +1,42 @@
+<div id="tester">
+  <label>Action</label> <input v-model="action">
+  <div v-for="v,k in modelBox">
+    <label>{{k}}</label> <input v-model="v">
+  </div>
+  <button @click="requestAll">SEND</button>
+
+
+  <div id="response">
+    <h1>Payload</h1>
+    <pre> {{ response }} </pre>
+  </div>
+
+  <div id="chats" class="row" >
+    <h1 class="text-center">Чаты</h1>
+    <template v-for="c, k in conversations">
+      <div class="col-md-3 room-name text-center" @click="joinConversation(k)">
+        <h2>{{ k }} {{getLength(conversations[k].Members)}}</h2>
+      </div>
+    </template>
+  </div>
+
+  <div id="chat">
+    <h2>{{ conversation.name }}</h2>
+    <ul class="list-group">
+      <li v-for="member in conversation.members" class="list-group-item">
+        {{member}}
+      </li>
+    </ul>
+  </div>
+
+  <div class="click-action panel">
+    <ul>
+      <li v-for="act in actions" @click="action=act">
+        {{ act }}
+      </li>
+    </ul>
+  </div>
+  
+
+  
+</div>

@@ -8,7 +8,7 @@
   </div>
 
   <main-slider></main-slider>
-  <global-button>ПРИВЕТ</global-button>
+  <!-- <global-button>ПРИВЕТ</global-button> -->
   <skull>
     <glitch></glitch>
   </skull>

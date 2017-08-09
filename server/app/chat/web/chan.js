@@ -1,4 +1,4 @@
-let token = "stas-token"
+let token = "default"
 
 class Chan {
 
@@ -44,7 +44,8 @@ class Chan {
 
     let schema = {
       action: this.action,
-      payload: this.payload
+      payload: this.payload,
+      token: this.token
     }
 
     this.sock.send(JSON.stringify(schema))
@@ -58,16 +59,14 @@ class Chan {
     self.sock = new SockJS(window.location.origin+'/echo')
 
     self.sock.onopen = function() {
+      self.authRequest()
       self.connected = true
     };
 
     self.sock.onmessage = function(e) {
-
-
       try {
         var data = JSON.parse(e.data);
-        console.log("%c<---ПРИНЯТО " + data.action,"font-size:1.4rem;color:darkblue")
-        console.log(JSON.parse(JSON.stringify(data)))
+        self.logResponse(data)
 
         self.funcBox["*"].forEach(func=>{
           func(data)
@@ -76,13 +75,8 @@ class Chan {
         self.funcBox[data.action].forEach(func=>{
           func(data)
         })
-
       } catch ( e ) {
-
-
-
       }
-
     };
     self.sock.onclose = function() {
       self.connected=false
@@ -94,6 +88,20 @@ class Chan {
         resolve(res.payload)
       })
     })
+  }
+  authRequest(){
+    this.req('set-user')
+  }
+
+  logRequest(){
+    
+  }
+
+  logResponse(data){
+    console.log("%c<---ПРИНЯТО " + data.action,"font-size:1.4rem;color:darkblue")
+    console.log(JSON.parse(JSON.stringify(data)))
+    console.log("%cPAYLOAD: ","font-size:1.2rem;color:darkblue")
+    console.log(JSON.parse(JSON.stringify(data.payload)))
   }
 }
 

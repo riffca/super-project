@@ -1,5 +1,13 @@
 <template>
   <div id="app">
+<!--     <h1>{{name}}</h1>
+    <ul>
+      <template v-for="product in products">
+        <li>
+          {{product}}
+        </li>
+      </template>
+    </ul> -->
     <router-view></router-view>
   </div>
 </template>
@@ -9,7 +17,40 @@
 import * as authService from 'services/auth'
 
 export default {
+  data(){
+    return {
+      "name": "Hot Studio",
+      "products": [
+        "Дизайн",
+        "Web",
+        "SMM"
+      ],
+
+      "menu": {
+        "options": [
+          {
+            "text": "",
+            "title": "Студия"
+          },
+          {
+            "text": "",
+            "title": "Контакты"
+          }
+        ]
+      },
+      "pages": [
+        {
+          name: "web"
+        },
+
+        {
+          name: "smm"
+        }
+      ]
+    }
+  },
   created(){
+    window.$Data = this.$root.data
     authService.fakeUserAuth(this.$store)
   }
 }
